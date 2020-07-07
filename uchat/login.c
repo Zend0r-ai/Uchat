@@ -20,7 +20,8 @@ struct login_info
 
 void *login_thread(void *param)
 {
-	char *res = "incorrect login or password";
+	// char *res = "incorrect login or password";
+    char *res = NULL;
 //    char *res = message_connect(((struct login_info *)param)->ip, ((struct login_info *)param)->iport);
     //ippppp port
 //	if(!res)
@@ -28,7 +29,7 @@ void *login_thread(void *param)
     if(res)
     {
         gtk_label_set_text(GTK_LABEL(statusLabel), res);
-        message_disconnect();
+        // message_disconnect();
     }
     else
     {
