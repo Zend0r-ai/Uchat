@@ -1,6 +1,5 @@
 COMMON_FILES=../proto/proto.c
-CLIENT_FILES=resources.c login.c chat.c  main.c
-SERVER_FILES=messages.c chat.c server_main.c
+CLIENT_FILES=resources.c start.c sign_up.c login.c chat.c  main.c
 
 all: chatclient
 chatclient:
