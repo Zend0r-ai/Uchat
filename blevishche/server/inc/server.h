@@ -19,8 +19,9 @@
 
 struct sockaddr_in addr;
 
-//int mx_socket_handler(int client_sock);
-int interact(int client_sock);
+int mx_daemon(const char *log_file);
+int mx_socket_handler(int client_sock);
+//int interact(int client_sock);
 
 
 
