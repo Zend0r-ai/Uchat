@@ -1,0 +1,16 @@
+/private/var/folders/zz/zyxvpxvq6csfxvn_n0003ymh000zn4/T/AppTranslocation/5C1F9D63-D372-4AD0-A055-FCFB6960AFB3/d/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/blevishche/study/uchat2/Uchat
+-- Configuring done
+CMake Error at CMakeLists.txt:14 (add_executable):
+  Cannot find source file:
+
+    client/a.out
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
+
+
+CMake Error at CMakeLists.txt:14 (add_executable):
+  No SOURCES given to target: Uchat
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
