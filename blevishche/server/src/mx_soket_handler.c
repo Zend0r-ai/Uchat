@@ -6,12 +6,18 @@
 //    if (size <= 0)
 //        return (int) size;
 //
-//    for (int i = 0; i < ; i++) {
-//        if (size > 0)
+//    //тут будет функция, которая определяет количество file descriptor клиентов, которые accept
+//
+//    for (int i = 0; i < /*количество фд клиентов, которые accept*/; i++) {
+//        if (/* count */ > 0)
 //            write(client_sock, &buffer, 2048);
 //    }
 //    return (int) size;
 //}
+
+
+
+
 int interact(int client_sock) {
     int buffer = 0;
 
