@@ -16,6 +16,6 @@ add_executable(Uchat
         client/a.out
         client/Makefile
         server/inc/server.h
-        server/src/main.c
+        server/src/test/main.c
         server/Makefile
         server/uchat_server)
