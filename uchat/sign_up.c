@@ -53,6 +53,12 @@ void do_reg(GtkWidget *widget, gpointer data)
     if(!gtk_widget_get_sensitive(regButton))
         return;
     const gchar *login, *password, *first_name, *last_name;
+    first_name = gtk_entry_get_text(GTK_ENTRY(firstNameEntry));
+    if(!first_name || !*first_name)
+    {
+        gtk_widget_grab_focus(firstNameEntry);
+        return;
+    }
     login = gtk_entry_get_text(GTK_ENTRY(loginEntry));
     if(!login || !*login)
     {
@@ -65,7 +71,6 @@ void do_reg(GtkWidget *widget, gpointer data)
         gtk_widget_grab_focus(passwordEntry);
         return;
     }
-    first_name = gtk_entry_get_text(GTK_ENTRY(firstNameEntry));
     last_name = gtk_entry_get_text(GTK_ENTRY(lastNameEntry));
     gtk_widget_set_sensitive(regButton, 0);
     struct reg_info *ri = malloc(sizeof(struct reg_info));

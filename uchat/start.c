@@ -63,4 +63,5 @@ void init_start_window()
     g_signal_connect(G_OBJECT(RegButton),"clicked", G_CALLBACK(open_reg_win),NULL);
     SignInButton = GTK_WIDGET(gtk_builder_get_object(builder,"OpenSignInWin"));
     g_signal_connect(G_OBJECT(SignInButton),"clicked", G_CALLBACK(open_login_win),NULL);
+    gtk_widget_grab_focus(SignInButton);
 }
