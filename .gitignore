@@ -55,6 +55,5 @@ dkms.conf
 ._.DS_Store
 *.o
 *.out
-main*
 
 .vscode
