@@ -17,6 +17,10 @@
 #include "../../libjson/json.h"
 #include <gtk/gtk.h>
 #include <time.h>
+#include <gio/gio.h>
+
+#define LG_ERROR_DATA "Invalid login or password"
+#define LG_ERROR_CONECTION "Server conection problem.."
 
 void init_chat_window();
 extern GtkWidget *chatWindow;
@@ -29,6 +33,12 @@ extern GtkWidget *signUpWindow;
 
 void init_start_window();
 extern GtkWidget *StartWindow;
+
+typedef struct s_client_info {
+    int sock;
+} t_client_info;
+
+t_client_info *get_client_info(void);
 
 
 

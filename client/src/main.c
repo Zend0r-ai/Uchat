@@ -1,5 +1,11 @@
 #include "../inc/client.h"
 
+t_client_info *get_client_info(void) {
+    static t_client_info socket;
+
+    return &socket;
+}
+
 int main(int argc,char *argv[]){
 	argc = 0;
     argv = NULL;

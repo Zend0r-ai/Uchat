@@ -1371,7 +1371,7 @@ GResource *client_get_resource (void)
 }
 /*
   If G_HAS_CONSTRUCTORS is true then the compiler support *both* constructors and
-  destructors, in a sane way, including e.g. on library unload. If not you're on
+  destructors, in a usable way, including e.g. on library unload. If not you're on
   your own.
 
   Some compilers need #pragma to handle this, which does not work with macros,

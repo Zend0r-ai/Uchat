@@ -33,7 +33,7 @@ JSONA = ../libjson/libjsonc.a
 JSOND = ../libjson
 JSONI = ../libjson/inc
 
-all: $(NAME) chatclient
+all: $(NAME)
 
 chatclient:
 	@cp $(SGLD) ./
@@ -42,7 +42,7 @@ chatclient:
 
 $(FILE:a/%=%)
 
-$(NAME): $(JSONA) $(OBJS)
+$(NAME): $(JSONA) $(OBJS) 
 	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -o $@ $(JSONA)
 	@printf "\r\33[2K$@ \033[32;1mcreated\033[0m\n"
 
