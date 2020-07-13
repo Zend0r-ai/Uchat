@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-GtkWidget *loginEntry, *passwordEntry, *firstNameEntry, *lastNameEntry;
+GtkWidget *loginEntry, *passwordEntry;
 GtkWidget *regButton;
 GtkWidget *signUpWindow;
 pthread_t reginer;
@@ -15,8 +15,6 @@ int regged_in;
 
 struct reg_info
 {
-    const char *first_name;
-    const char *last_name;
     const char *login;
     const char *password;
 };
@@ -52,7 +50,7 @@ void do_reg(GtkWidget *widget, gpointer data)
     (void) data;
     if(!gtk_widget_get_sensitive(regButton))
         return;
-    const gchar *login, *password, *first_name, *last_name;
+    const gchar *login, *password;
     login = gtk_entry_get_text(GTK_ENTRY(loginEntry));
     if(!login || !*login)
     {
@@ -65,12 +63,8 @@ void do_reg(GtkWidget *widget, gpointer data)
         gtk_widget_grab_focus(passwordEntry);
         return;
     }
-    first_name = gtk_entry_get_text(GTK_ENTRY(firstNameEntry));
-    last_name = gtk_entry_get_text(GTK_ENTRY(lastNameEntry));
     gtk_widget_set_sensitive(regButton, 0);
     struct reg_info *ri = malloc(sizeof(struct reg_info));
-    ri->first_name = first_name;
-    ri->last_name = last_name;
     ri->login = login;
     ri->password = password;
     gtk_widget_hide(signUpWindow);
@@ -85,13 +79,8 @@ void init_sign_up_window()
     signUpWindow = GTK_WIDGET(gtk_builder_get_object(builder,"reg_window"));
     g_signal_connect(signUpWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
 
-
-    firstNameEntry = GTK_WIDGET(gtk_builder_get_object(builder,"first_name_entry"));
-    lastNameEntry = GTK_WIDGET(gtk_builder_get_object(builder,"last_name_entry"));
     loginEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_login_entry"));
     passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_pass_entry"));
-    g_signal_connect(G_OBJECT(firstNameEntry),"activate", G_CALLBACK(do_reg),NULL);
-    g_signal_connect(G_OBJECT(lastNameEntry),"activate", G_CALLBACK(do_reg),NULL);
     g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(do_reg),NULL);
     g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(do_reg),NULL);
     regButton = GTK_WIDGET(gtk_builder_get_object(builder,"reg_button"));

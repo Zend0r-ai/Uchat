@@ -3,40 +3,14 @@
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <object class="GtkWindow" id="reg_window">
-    <property name="width_request">264</property>
-    <property name="height_request">318</property>
+    <property name="width_request">248</property>
+    <property name="height_request">201</property>
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
     <child>
       <object class="GtkFixed">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <child>
-          <object class="GtkEntry" id="first_name_entry">
-            <property name="width_request">200</property>
-            <property name="height_request">34</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="placeholder_text" translatable="yes">First Name</property>
-          </object>
-          <packing>
-            <property name="x">32</property>
-            <property name="y">46</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="last_name_entry">
-            <property name="width_request">200</property>
-            <property name="height_request">24</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="placeholder_text" translatable="yes">Last Name</property>
-          </object>
-          <packing>
-            <property name="x">32</property>
-            <property name="y">102</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkEntry" id="reg_login_entry">
             <property name="width_request">200</property>
@@ -46,8 +20,8 @@
             <property name="placeholder_text" translatable="yes">Login</property>
           </object>
           <packing>
-            <property name="x">32</property>
-            <property name="y">158</property>
+            <property name="x">25</property>
+            <property name="y">41</property>
           </packing>
         </child>
         <child>
@@ -61,8 +35,8 @@
             <property name="placeholder_text" translatable="yes">Password</property>
           </object>
           <packing>
-            <property name="x">32</property>
-            <property name="y">214</property>
+            <property name="x">25</property>
+            <property name="y">88</property>
           </packing>
         </child>
         <child>
@@ -75,8 +49,8 @@
             <property name="receives_default">True</property>
           </object>
           <packing>
-            <property name="x">32</property>
-            <property name="y">271</property>
+            <property name="x">25</property>
+            <property name="y">133</property>
           </packing>
         </child>
         <child>
@@ -88,8 +62,8 @@
             <property name="label" translatable="yes">Sign Up</property>
           </object>
           <packing>
-            <property name="x">84</property>
-            <property name="y">12</property>
+            <property name="x">76</property>
+            <property name="y">11</property>
           </packing>
         </child>
       </object>
