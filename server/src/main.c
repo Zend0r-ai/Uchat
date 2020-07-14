@@ -16,11 +16,11 @@ int main(int argc, const char **argv) {
     }
 //    struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(5001);
+    addr.sin_port = htons(5003);
     inet_aton("127.0.0.1", &addr.sin_addr);
 
     int on = 1;
-    setsockopt(server, SOL_SOCKET,(SO_REUSEPORT | SO_REUSEADDR), &on, sizeof(on));
+    setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
     if (bind(server, (struct sockaddr *) &addr, sizeof(addr)) != 0) {
         printf("bind error = %s\n", strerror(errno));
         return -1;

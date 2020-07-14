@@ -45,12 +45,10 @@ int mx_socket_handler(int client_sock) {
     json_object *jobj = NULL;
     const char *type;
     int ret = 0;
-    // char *new_buff = NULL;
-  	ssize_t res = read(client_sock, &buffer, 1024);
-
+    
+  	ssize_t res = read(client_sock, buffer, 1024);
    	if (res <= 0)
         printf("%s\n", strerror(errno));
-
     jobj = json_tokener_parse(buffer);
     type = json_object_get_string(json_object_object_get(jobj, "type"));
     printf("log in:%s", type);
@@ -60,6 +58,8 @@ int mx_socket_handler(int client_sock) {
     
     if (res > 0)
         res = write(client_sock, &ret, sizeof(ret));
+
+
 //        printf("Send %s\n", buffer);
 //    json_object_put(jobj);
 

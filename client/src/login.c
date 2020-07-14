@@ -15,32 +15,35 @@ struct login_info
     char *password;
 };
 
-// char *message_do_login(struct login_info *log_par) {
-//     t_client_info *clnt = get_client_info();
-//     char *data = NULL;
-//     json_object *jobj = json_object_new_object();
-//     json_object *j_type = json_object_new_string("type");
-//     json_object *j_login = json_object_new_string("login");
-//     json_object *j_passwd = json_object_new_string("password");
-//     json_object_object_add(jobj, "log_in", j_login);
-//     json_object_object_add(jobj, log_par->login, j_login);
-//     json_object_object_add(jobj,log_par->password, j_passwd);
+char *message_do_login(struct login_info *log_par) {
+    t_client_info *clnt = get_client_info();
+    char *data = NULL;
+    json_object *jobj = json_object_new_object();
+    json_object *j_type = json_object_new_string("log_in");
+    json_object *j_login = json_object_new_string(log_par->login);
+    json_object *j_passwd = json_object_new_string(log_par->password);
+    json_object_object_add(jobj, "type", j_type);
+    json_object_object_add(jobj, "login", j_login);
+    json_object_object_add(jobj, "password", j_passwd);
 
-//     data = (char *)json_object_to_json_string(jobj);
 
-//     if (write(clnt->sock, data, strlen(data)) == -1) {
-//         printf("error = %s\n", strerror(errno));
-//     }
+    // write(clnt->sock, "hello", 5);
 
-//     int res;
-//     read(clnt->sock, &res, 1024);
+    data = (char *)json_object_to_json_string(jobj);
+    write(0, data, strlen(data));
+    if (write(clnt->sock, data, strlen(data)) == -1) {
+        printf("error = %s\n", strerror(errno));
+    }
 
-//     if (res == 1)
-//         return LG_ERROR_DATA;
-//     else if (res == 0)
-//         return NULL;
-//     return NULL;
-// }
+    int res;
+    read(clnt->sock, &res, 1024);
+
+    if (res == 1)
+        return LG_ERROR_DATA;
+    else if (res == 0)
+        return NULL;
+    return NULL;
+}
 
 void *login_thread(void *param)
 {
@@ -49,7 +52,7 @@ void *login_thread(void *param)
 //    char *res = message_connect(((struct login_info *)param)->ip, ((struct login_info *)param)->iport);
     //ippppp port
 //	if(!res)
-    // res = message_do_login((struct login_info *)param);
+    res = message_do_login((struct login_info *)param);
     if(res)
     {
         gtk_label_set_text(GTK_LABEL(statusLabel), res);
@@ -88,8 +91,8 @@ void do_login(GtkWidget *widget, gpointer data)
     }
     gtk_widget_set_sensitive(loginButton, 0);
     struct login_info *li = malloc(sizeof(struct login_info));
-    li->login = login;
-    li->password = password;
+    li->login = (char *)login;
+    li->password = (char *)password;
     pthread_create(&loginner, 0, login_thread, (void *)li);
 }
 

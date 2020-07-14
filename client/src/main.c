@@ -10,13 +10,16 @@ int main(int argc,char *argv[]){
 	argc = 0;
     argv = NULL;
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    t_client_info *inf_sock = get_client_info();
+    printf("%d\n", sock);
+    inf_sock->sock = sock;
     if (sock == -1) {
         printf("error = %s\n", strerror(errno));
         return -1;
     }
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(5001);
+    addr.sin_port = htons(5003);
     inet_aton("127.0.0.1", &addr.sin_addr);
     if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) != 0) {
         printf("connect error = %s\n", strerror(errno));

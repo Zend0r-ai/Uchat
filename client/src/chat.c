@@ -23,7 +23,7 @@ void *watcher_thread(void *param)
     (void) param;
     struct timeval tv;
     struct tm *nowtm;
-    char *author, *body;
+    char *author = NULL, *body = NULL;
     char timebuf[64];
     // message_request_history(REQUEST_HISTORY);
     while(1)
@@ -58,7 +58,7 @@ void *watcher_thread(void *param)
     return param;
 }
 
-void init_chat_window(char *login)
+void init_chat_window(/*char *login*/)
 {
     GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/chat.glade");
 
