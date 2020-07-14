@@ -19,8 +19,13 @@
 #include <time.h>
 #include <gio/gio.h>
 
-#define LG_ERROR_DATA "Invalid login or password"
+// ======= Sing In defines ========
+#define LG_ERROR_DATA "Wrong login or password"
 #define LG_ERROR_CONECTION "Server conection problem.."
+
+// ======= Sing Up defines ========
+#define SU_ERROR_DATA "Login or Nickname already exist"
+#define SU_ERROR_CONECTION "Server conection problem.."
 
 void init_chat_window();
 extern GtkWidget *chatWindow;
