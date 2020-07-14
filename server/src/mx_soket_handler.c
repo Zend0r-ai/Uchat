@@ -47,11 +47,11 @@ int mx_socket_handler(int client_sock) {
     int ret = 0;
     
   	ssize_t res = read(client_sock, buffer, 1024);
-   	if (res <= 0)
-        printf("%s\n", strerror(errno));
+   	// if (res <= 0)
+    //     printf("%s\n", strerror(errno));
+    // 	return -1;
     jobj = json_tokener_parse(buffer);
     type = json_object_get_string(json_object_object_get(jobj, "type"));
-    printf("log in:%s", type);
     if (strcmp(type, "log_in") == 0)
     	ret = mx_proc_log_in(jobj);
     
