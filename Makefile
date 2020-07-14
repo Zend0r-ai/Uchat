@@ -13,6 +13,7 @@ RM = /bin/rm -rf
 all:
 	@$(MAKE_M) $(SERVER_DIR) $@
 	@$(MAKE_M) $(CLIENT_DIR) $@
+	@cp $(addprefix $(CLIENT_DIR)/, $(NAME)) $(addprefix $(SERVER_DIR)/, $(SERVER_NAME)) .
 
 $(NAME):
 	@$(MAKE_M) $(CLIENT_DIR)

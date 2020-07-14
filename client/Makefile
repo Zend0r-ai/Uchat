@@ -37,13 +37,14 @@ JSOND = 	../libjson
 JSONI = 	../libjson/inc
 
 
-all: install
+all: install clean
 
 install:
 	@make -sC $(JSOND)
 	@cp $(SGLD) ./
 	@glib-compile-resources ./src/client.gresource.xml --target=./src/resources.c --generate-source
-	@clang  $(SRCS) $(RSS) $(JSONA) `pkg-config --cflags --libs gtk+-3.0` -o ./uchat_client  -I$(INCS) -I$(INCD) -I$(JSONI)
+	@clang  $(SRCS) $(RSS) $(JSONA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI)
+	@printf "\r\33[2K$(NAME) \033[32;1mcreated\033[0m\n"
 
 
 
@@ -77,7 +78,7 @@ install:
 # 	@make -sC $(JSOND)
 
 clean:
-	@rm chat_client resources.c
+	@rm -rf ./src/resources.c $(GLD)
 	@make -sC $(JSOND) $@
 	@rm -rf $(OBJD)
 	@printf "$(OBJD)\t   \033[31;1mdeleted\033[0m\n"
