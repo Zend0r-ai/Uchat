@@ -81,8 +81,8 @@ void *sing_up_thread(void *param)
     char *res = NULL;
 //    char *res = message_connect(((struct reg_info *)param)->ip, ((struct reg_info *)param)->iport);
     //ippppp port
-    if(!res)
-       res = message_do_sing_up((struct reg_info *)param);
+    // if(!res)
+       // res = message_do_sing_up((struct reg_info *)param);
     if(res)
     {
         gtk_label_set_text(GTK_LABEL(statusLabel), res);
@@ -119,13 +119,14 @@ void do_reg(GtkWidget *widget, gpointer data)
         gtk_widget_grab_focus(passwordEntry);
         return;
     }
-    gtk_widget_set_sensitive(regButton, 0);
     struct reg_info *ri = malloc(sizeof(struct reg_info));
     ri->login = (char *)login;
     ri->password = (char *)password;
     ri->nickname = (char *)nickname;
-    // gtk_widget_hide(signUpWindow);
-    // gtk_widget_show_all(StartWindow);
+    init_login_window();
+    gtk_widget_set_sensitive(regButton, 1);
+    gtk_widget_hide(signUpWindow);
+    gtk_widget_show_all(loginWindow);
     pthread_create(&reginer, 0, sing_up_thread, (void *)ri);
 }
 
@@ -135,7 +136,7 @@ void init_sign_up_window()
 
     signUpWindow = GTK_WIDGET(gtk_builder_get_object(builder,"reg_window"));
     g_signal_connect(signUpWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
-
+    gtk_window_set_title(GTK_WINDOW(signUpWindow), "Sign Up");
     loginEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_login_entry"));
     passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_pass_entry"));
     g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(do_reg),NULL);

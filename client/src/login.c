@@ -122,7 +122,7 @@ void init_login_window()
 	loginWindow = GTK_WIDGET(gtk_builder_get_object(builder,"LoginWin"));
 	g_signal_connect(loginWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
 
-
+    gtk_window_set_title(GTK_WINDOW(loginWindow), "Sign In");
 	loginEntry = GTK_WIDGET(gtk_builder_get_object(builder,"LoginEntry"));
 	passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"PassEntry"));
 	g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(do_login),NULL);

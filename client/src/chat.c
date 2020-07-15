@@ -58,13 +58,13 @@ void *watcher_thread(void *param)
     return param;
 }
 
-void init_chat_window(/*char *login*/)
+void init_chat_window(char *login)
 {
     GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/chat.glade");
 
     chatWindow = GTK_WIDGET(gtk_builder_get_object(builder,"chatWindow"));
-   char buf[100] = "uchat";
-//    strcat(buf, login);
+   char buf[100] = "uchat : ";
+   strcat(buf, login);
     gtk_window_set_title(GTK_WINDOW(chatWindow), buf);
    g_signal_connect(chatWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
     sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"SendEntry"));
