@@ -9,16 +9,51 @@ GtkWidget *statusLabel;
 pthread_t reginer;
 int regged_in;
 
-struct reg_info
-{
-    char *login;
-    char *password;
-    char *nickname;
-};
+/*====================== GLOBAL =========================*/
 
-char *message_do_sing_up(struct reg_info *reg_par) {
+char *mx_proc_log_in_back(json_object *jobj, t_user_info *user) {
+    int error = json_object_get_int(json_object_object_get(jobj, "error"));
+
+    if (error == 0)
+        user->nickname = json_object_get_string(json_object_object_get(jobj, "nickname"));
+    else
+        user->nickname = NULL;
+    switch (error) {
+        case 1: return LG_ERROR_DATA;
+        case 2: return LG_ERROR_CONECTION;
+    }
+    return NULL;
+}
+
+char *mx_proc_sign_up_back(json_object *jobj) {
+    int error = json_object_get_int(json_object_object_get(jobj, "error"));
+
+    switch (error) {
+        case 1: return SU_ERROR_DATA;
+        case 2: return SU_ERROR_CONECTION;
+    }
+    return NULL;
+}
+
+char *mx_proc_server_mess(char *buffer, t_user_info *user) {
+    json_object *jobj = json_tokener_parse(buffer);
+    const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
+    
+    if (strcmp(type, "log_in_back") == 0)
+        return mx_proc_log_in_back(jobj, user);
+    else if (strcmp(type, "sign_up_back") == 0)
+        return mx_proc_sign_up_back(jobj);
+    // else if (strcmp(type, "do_message") == 0)
+    //     return mx_proc_do_message(jobj);
+    return NULL;
+}
+
+/*====================== GLOBAL END =====================*/
+
+char *message_do_sing_up(t_user_info *reg_par) {
     t_client_info *clnt = get_client_info();
     char *data = NULL;
+    char answ[1024];
 
                 reg_par->nickname = "ogur4ik";
 
@@ -39,24 +74,18 @@ char *message_do_sing_up(struct reg_info *reg_par) {
     if (write(clnt->sock, data, strlen(data)) == -1) {
         printf("error = %s\n", strerror(errno));
     }
-
-    read(clnt->sock, &res, 1024);
-
-    switch (res) {
-        case 1: return LG_ERROR_DATA; break;
-        case -1: return LG_ERROR_CONECTION; break;
-    }
-    return NULL;
+    read(clnt->sock, answ, 1024);
+    return mx_proc_server_mess(answ, reg_par);
 }
 
 // void *login_thread(void *param)
 // {
 // 	// char *res = "incorrect login or password";
 //     char *res = NULL;
-// //    char *res = message_connect(((struct reg_info *)param)->ip, ((struct reg_info *)param)->iport);
+// //    char *res = message_connect(((t_user_info *)param)->ip, ((t_user_info *)param)->iport);
 //     //ippppp port
 // //	if(!res)
-// //        res = message_do_login(((struct reg_info *)param)->login, ((struct reg_info *)param)->password);
+// //        res = message_do_login(((t_user_info *)param)->login, ((t_user_info *)param)->password);
 //     if(res)
 //     {
 //         gtk_label_set_text(GTK_LABEL(statusLabel), res);
@@ -64,7 +93,7 @@ char *message_do_sing_up(struct reg_info *reg_par) {
 //     }
 //     else
 //     {
-//         init_chat_window(((struct reg_info *)param)->login);
+//         init_chat_window(((t_user_info *)param)->login);
 //         regged_in = 1;
 //         free(param);
 //         return param;
@@ -78,10 +107,10 @@ void *sing_up_thread(void *param)
 {
  // char *res = "incorrect login or password";
     char *res = NULL;
-//    char *res = message_connect(((struct reg_info *)param)->ip, ((struct reg_info *)param)->iport);
+//    char *res = message_connect(((t_user_info *)param)->ip, ((t_user_info *)param)->iport);
     //ippppp port
     if(!res)
-       res = message_do_sing_up((struct reg_info *)param);
+       res = message_do_sing_up((t_user_info *)param);
     if(res)
     {
         gtk_label_set_text(GTK_LABEL(statusLabel), res);
@@ -89,7 +118,7 @@ void *sing_up_thread(void *param)
     }
     else
     {
-        init_chat_window(((struct reg_info *)param)->login);
+        init_chat_window(((t_user_info *)param)->login);
         regged_in = 1;
         free(param);
         return param;
@@ -118,7 +147,7 @@ void do_reg(GtkWidget *widget, gpointer data)
         gtk_widget_grab_focus(passwordEntry);
         return;
     }
-    struct reg_info *ri = malloc(sizeof(struct reg_info));
+    t_user_info *ri = malloc(sizeof(t_user_info));
     ri->login = (char *)login;
     ri->password = (char *)password;
     ri->nickname = (char *)nickname;
