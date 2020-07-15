@@ -141,7 +141,7 @@ void init_sign_up_window()
     g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(do_reg),NULL);
     g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(do_reg),NULL);
     regButton = GTK_WIDGET(gtk_builder_get_object(builder,"reg_button"));
-    statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"StatusLabel"));
+    statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"checking_login_label"));
     g_signal_connect(G_OBJECT(regButton),"clicked", G_CALLBACK(do_reg),NULL);
     regged_in = 0;
     // g_timeout_add(50, check_login, 0);
