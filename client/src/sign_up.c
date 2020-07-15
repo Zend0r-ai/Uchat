@@ -20,7 +20,7 @@ char *mx_proc_log_in_back(json_object *jobj, t_user_info *user) {
         user->nickname = NULL;
     switch (error) {
         case 1: return LG_ERROR_DATA;
-        case 2: return LG_ERROR_CONECTION;
+        case 2: return LG_ERROR_ONLINE;
     }
     return NULL;
 }
@@ -29,8 +29,8 @@ char *mx_proc_sign_up_back(json_object *jobj) {
     int error = json_object_get_int(json_object_object_get(jobj, "error"));
 
     switch (error) {
-        case 1: return SU_ERROR_DATA;
-        case 2: return SU_ERROR_CONECTION;
+        case 1: return SU_ERROR_DATA_LOGIN;
+        case 2: return SU_ERROR_DATA_NICKN;
     }
     return NULL;
 }

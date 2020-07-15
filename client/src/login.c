@@ -46,7 +46,7 @@ void *login_thread(void *param)
 	}
 	else
 	{
-		init_chat_window(((t_user_info *)param)->login);
+		init_chat_window(((t_user_info *)param)->nickname);
 		logged_in = 1;
 		free(param);
 		return param;

@@ -23,9 +23,11 @@
 // ======= Sing In defines ========
 #define LG_ERROR_DATA "Wrong login or password"
 #define LG_ERROR_CONECTION "Server conection problem.."
+#define LG_ERROR_ONLINE "User already online"
 
 // ======= Sing Up defines ========
-#define SU_ERROR_DATA "Login or Nickname already exist"
+#define SU_ERROR_DATA_LOGIN "Login already exist"
+#define SU_ERROR_DATA_NICKN "Nickname already exist"
 #define SU_ERROR_CONECTION "Server conection problem.."
 
 void init_chat_window();
