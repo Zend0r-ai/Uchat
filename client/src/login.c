@@ -9,15 +9,10 @@ GtkWidget *loginWindow;
 pthread_t loginner;
 int logged_in;
 
-struct login_info
-{
-	char *login;
-	char *password;
-};
-
-char *message_do_login(struct login_info *log_par) {
+char *message_do_login(t_user_info *log_par) {
 	t_client_info *clnt = get_client_info();
 	char *data = NULL;
+	char answ[1024];
 	json_object *jobj = json_object_new_object();
 	json_object *j_type = json_object_new_string("log_in");
 	json_object *j_login = json_object_new_string(log_par->login);
@@ -32,25 +27,18 @@ char *message_do_login(struct login_info *log_par) {
 	if (write(clnt->sock, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
-
-	int res;
-	read(clnt->sock, &res, 1024);
-
-	switch (res) {
-		case 1: return LG_ERROR_DATA; break;
-		case -1: return LG_ERROR_CONECTION; break;
-	}
-	return NULL;
+	read(clnt->sock, answ, 1024);
+	return mx_proc_server_mess(answ, log_par);
 }
 
 void *login_thread(void *param)
 {
 	// char *res = "incorrect login or password";
 	char *res = NULL;
-//    char *res = message_connect(((struct login_info *)param)->ip, ((struct login_info *)param)->iport);
+//    char *res = message_connect(((t_user_info *)param)->ip, ((t_user_info *)param)->iport);
 	//ippppp port
 //	if(!res)
-	res = message_do_login((struct login_info *)param);
+	res = message_do_login((t_user_info *)param);
 	if(res)
 	{
 		gtk_label_set_text(GTK_LABEL(statusLabel), res);
@@ -58,7 +46,7 @@ void *login_thread(void *param)
 	}
 	else
 	{
-		init_chat_window(((struct login_info *)param)->login);
+		init_chat_window(((t_user_info *)param)->login);
 		logged_in = 1;
 		free(param);
 		return param;
@@ -88,7 +76,7 @@ void do_login(GtkWidget *widget, gpointer data)
 		return;
 	}
 	gtk_widget_set_sensitive(loginButton, 0);
-	struct login_info *li = malloc(sizeof(struct login_info));
+	t_user_info *li = malloc(sizeof(t_user_info));
 	li->login = (char *)login;
 	li->password = (char *)password;
 	pthread_create(&loginner, 0, login_thread, (void *)li);

@@ -18,6 +18,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 #include <gio/gio.h>
+#include "../../libmx/inc/libmx.h"
 
 // ======= Sing In defines ========
 #define LG_ERROR_DATA "Wrong login or password"
@@ -39,6 +40,13 @@ extern GtkWidget *signUpWindow;
 void init_start_window();
 extern GtkWidget *StartWindow;
 
+typedef struct s_user_info
+{
+    char *login;
+    char *password;
+    const char *nickname;
+} t_user_info;
+
 typedef struct s_client_info {
     int sock;
 } t_client_info;
@@ -46,5 +54,11 @@ typedef struct s_client_info {
 t_client_info *get_client_info(void);
 
 void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
+
+char *mx_proc_server_mess(char *buffer, t_user_info *user);
+char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
+char *mx_proc_sign_up_back(json_object *jobj);
+
+
 
 #endif
