@@ -17,3 +17,11 @@ button:hover {
 	background-color: #ffffff;
 	color: #494949;
 }
+
+entry {
+	padding: 2px 3px;
+	border:2px solid;
+	border-radius: 3px;
+	color: #303030;
+	border-color: #BABABA;
+}

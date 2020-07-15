@@ -45,6 +45,6 @@ typedef struct s_client_info {
 
 t_client_info *get_client_info(void);
 
-
+void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
 
 #endif

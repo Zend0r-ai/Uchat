@@ -108,6 +108,13 @@ gboolean check_login(void *param)
 	return G_SOURCE_CONTINUE;
 }
 
+// void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget){
+//     GtkStyleContext *con = gtk_widget_get_style_context(widget);
+//     gtk_style_context_add_provider(con,
+//             GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+// }
+
+
 void init_login_window()
 {
 	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/login.glade");
@@ -123,6 +130,17 @@ void init_login_window()
 	statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"StatusLabel"));
 	loginButton = GTK_WIDGET(gtk_builder_get_object(builder,"LoginButton"));
 	g_signal_connect(G_OBJECT(loginButton),"clicked", G_CALLBACK(do_login),NULL);
+	
+	GtkCssProvider *cssStyle;
+    cssStyle = gtk_css_provider_new();
+
+    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+
+    mx_css_set(cssStyle, loginWindow);
+    mx_css_set(cssStyle, loginEntry);
+    mx_css_set(cssStyle, passwordEntry);
+    mx_css_set(cssStyle, loginButton);
+
 	logged_in = 0;
 	g_timeout_add(50, check_login, 0);
 }

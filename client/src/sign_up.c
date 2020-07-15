@@ -143,6 +143,16 @@ void init_sign_up_window()
     regButton = GTK_WIDGET(gtk_builder_get_object(builder,"reg_button"));
     statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"checking_login_label"));
     g_signal_connect(G_OBJECT(regButton),"clicked", G_CALLBACK(do_reg),NULL);
+    
+    GtkCssProvider *cssStyle;
+    cssStyle = gtk_css_provider_new();
+
+    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+
+    mx_css_set(cssStyle, signUpWindow);
+    mx_css_set(cssStyle, loginEntry);
+    mx_css_set(cssStyle, passwordEntry);
+    mx_css_set(cssStyle, regButton);
     regged_in = 0;
     // g_timeout_add(50, check_login, 0);
 }

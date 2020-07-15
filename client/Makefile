@@ -11,7 +11,8 @@ GLDD	=	gld
 INC		=	client.h
 INCS	=	$(addprefix $(INCD)/, $(INC))
 
-RS		=	resources.c
+RS		=	resources.c \
+			style.c
 
 SRC		=	start.c\
 			sign_up.c\
