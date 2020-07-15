@@ -4,7 +4,14 @@ int main(int argc, const char **argv) {
 
     argc = 0;
     argv = NULL;
+    
+    const char *db_name = "uchat.db";
+    int connected_users[USERS_LIMIT];
 
+    //memset(connected_users, 0, USERS_LIMIT);
+    for (int i = 0; i < USERS_LIMIT; i++) {
+        connected_users[i] = 0;
+    }
 //    if (mx_daemon(argv[1]) == -1) {
 //        printf("error 1 = %s\n", strerror(errno));
 //        return -1;
@@ -14,10 +21,10 @@ int main(int argc, const char **argv) {
         printf("error = %s\n", strerror(errno));
         return -1;
     }
-//    struct sockaddr_in addr;
+
     addr.sin_family = AF_INET;
     addr.sin_port = htons(5003);
-    inet_aton("127.0.0.1", &addr.sin_addr);
+    inet_aton("10.111.3.11", &addr.sin_addr);
 
     int on = 1;
     setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
@@ -35,9 +42,9 @@ int main(int argc, const char **argv) {
         close(server);
         return -1;
     }
-    struct kevent new_ev;
-    EV_SET(&new_ev, server, EVFILT_READ, EV_ADD, 0, 0, 0);
-    if (kevent(kq, &new_ev, 1, 0, 0, NULL) == -1) {
+    struct kevent new_event;
+    EV_SET(&new_event, server, EVFILT_READ, EV_ADD, 0, 0, 0);
+    if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
         printf("error = %s\n", strerror(errno));
         close(server);
         return -1;
@@ -45,36 +52,47 @@ int main(int argc, const char **argv) {
     struct timespec timeout;
     timeout.tv_sec = 1;
     timeout.tv_nsec = 0;
+    
+    // database init
+    db_open(&db, db_name);
+    db_init(&db);
+
     while(1) {
-        int nfds = kevent(kq, NULL, 0, &new_ev, 1, NULL);
-        if (nfds == 0) {
-            continue;
-        }
+        
+        int nfds = kevent(kq, NULL, 0, &new_event, 1, NULL);
+        // if (nfds == 0) {
+        //     continue;
+        // }
         if (nfds == -1) {
             printf("error = %s\n", strerror(errno));
             break;
         }
-        if (new_ev.ident == (unsigned long)server) {
+        if (new_event.ident == (unsigned long)server) {
             int client_sock = accept(server, NULL, NULL);
             if (client_sock == -1) {
                 printf("error = %s\n", strerror(errno));
                 break;
             }
-            printf("New client\n");
-            EV_SET(&new_ev, client_sock, EVFILT_READ, EV_ADD, 0, 0, 0);
-            if (kevent(kq, &new_ev, 1, 0, 0, NULL) == -1) {
+            printf("New client, fd=%d\n", client_sock);
+            //connected_users[client_sock] = 1; // rewrite with user_id
+            
+            EV_SET(&new_event, client_sock, EVFILT_READ, EV_ADD, 0, 0, 0);
+            if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
                 printf("error = %s\n", strerror(errno));
                 break;
             }
         }
         else {
-            mx_socket_handler(new_ev.ident);
-            if ((new_ev.flags & EV_EOF) != 0) {
-                printf("Client disconnected\n");
-                close(new_ev.ident);
+            mx_socket_handler(new_event.ident, connected_users);
+            if ((new_event.flags & EV_EOF) != 0) {
+                printf("Client disconnected, fd=%lu\n", new_event.ident);
+                connected_users[new_event.ident] = 0;
+                close(new_event.ident);
+                
             }
         }
     }
+    sqlite3_close(db);
     close(kq);
     close(server);
     return 0;
