@@ -134,7 +134,7 @@ void init_sign_up_window()
     GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/sign_up.glade");
 
     signUpWindow = GTK_WIDGET(gtk_builder_get_object(builder,"reg_window"));
-    g_signal_connect(signUpWindow,"destroy", G_CALLBACK(init_start_window),NULL);
+    g_signal_connect(signUpWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
 
     loginEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_login_entry"));
     passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_pass_entry"));
