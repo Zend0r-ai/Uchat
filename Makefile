@@ -2,7 +2,7 @@ NAME = uchat
 SERVER_NAME = uchat_server
 SERVER_DIR = server
 CLIENT_DIR = client
-#LIBMX_DIR = libs/libmx
+LIBMX_DIR = libmx
 JSON_DIR = libjson
 
 
@@ -25,15 +25,14 @@ clean:
 	@$(MAKE_M) $(SERVER_DIR) $@
 	@$(MAKE_M) $(CLIENT_DIR) $@
 	@$(MAKE_M) $(LIBMX_DIR) $@
-	@$(MAKE_M) $(LIBCJSON_DIR) $@
-	@$(MAKE_M) $(LIBUTILS_DIR) $@
+	@$(MAKE_M) $(JSON_DIR) $@
 
 uninstall:
 	@$(MAKE_M) $(SERVER_DIR) $@
 	@$(MAKE_M) $(CLIENT_DIR) $@
 	@$(MAKE_M) $(LIBMX_DIR) $@
-	@$(MAKE_M) $(LIBCJSON_DIR) $@
-	@$(MAKE_M) $(LIBUTILS_DIR) $@
+	@$(MAKE_M) $(JSON_DIR) $@
+	@rm -rf $(NAME) $(SERVER_NAME)
 
 reinstall: uninstall all
 

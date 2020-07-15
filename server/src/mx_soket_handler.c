@@ -3,13 +3,16 @@
 static int mx_proc_log_in(json_object *jobj);
 static int mx_proc_reg(json_object *jobj);
 
-int mx_socket_handler(int client_sock) {
+void mx_socket_handler(int client_sock) {
     char buffer[1024];
     json_object *jobj = NULL;
     const char *type;
     int ret = 0;
-    
-  	ssize_t res = read(client_sock, buffer, 1024);
+    ssize_t res = read(client_sock, buffer, 1024);
+
+    if (res <= 0) {
+        return;
+    }
     jobj = json_tokener_parse(buffer);
     type = json_object_get_string(json_object_object_get(jobj, "type"));
     if (strcmp(type, "log_in") == 0)
@@ -24,8 +27,6 @@ int mx_socket_handler(int client_sock) {
 
 //        printf("Send %s\n", buffer);
 //    json_object_put(jobj);
-
-    return (int) res;
 }
 
 

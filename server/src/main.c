@@ -68,12 +68,7 @@ int main(int argc, const char **argv) {
             }
         }
         else {
-            int rc = mx_socket_handler(new_ev.ident);
-//            int rc = interact(new_ev.ident);
-            if (rc == -1) {
-                printf("error = %s\n", strerror(errno));
-                break;
-            }
+            mx_socket_handler(new_ev.ident);
             if ((new_ev.flags & EV_EOF) != 0) {
                 printf("Client disconnected\n");
                 close(new_ev.ident);
