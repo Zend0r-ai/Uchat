@@ -36,18 +36,24 @@ JSONA = 	../libjson/libjsonc.a
 JSOND = 	../libjson
 JSONI = 	../libjson/inc
 
+LIBMXA = 	../libmx/libmx.a
+LIBMXD = 	../libmx
+LIBMXI = 	../libmx/inc
 
-all: install clean
+
+all: install_json install_libmx install clean
 
 install:
-	@make -sC $(JSOND)
 	@cp $(SGLD) ./
 	@glib-compile-resources ./src/client.gresource.xml --target=./src/resources.c --generate-source
-	@clang  $(SRCS) $(RSS) $(JSONA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI)
+	@clang  $(SRCS) $(RSS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI)
 	@printf "\r\33[2K$(NAME) \033[32;1mcreated\033[0m\n"
 
+install_libmx:
+	@make -sC $(LIBMXD)
 
-
+install_json:
+	@make -sC $(JSOND)
 
 
 # all: $(NAME)
