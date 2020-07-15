@@ -6,26 +6,32 @@ t_client_info *get_client_info(void) {
     return &socket;
 }
 
-int main(int argc,char *argv[]){
-	argc = 0;
-    argv = NULL;
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+static int init_connection(int argc,char *argv[], int sock) {
     t_client_info *inf_sock = get_client_info();
-    printf("%d\n", sock);
+    struct sockaddr_in addr;
+
     inf_sock->sock = sock;
     if (sock == -1) {
-        printf("error = %s\n", strerror(errno));
+        printf("ERROR: %s\n", strerror(errno));
         return -1;
     }
-    struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(5003);
     inet_aton("127.0.0.1", &addr.sin_addr);
     if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) != 0) {
-        printf("connect error = %s\n", strerror(errno));
+        printf("CONNECT ERROR: %s\n", strerror(errno));
         close(sock);
         return -1;
     }
+    return 0;
+}
+
+int main(int argc,char *argv[]){
+	argc = 0;
+    argv = NULL;
+    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (init_connection(argc, argv, sock) < 0)
+        return -1;
     gtk_init(&argc, &argv);
     init_start_window();
     gtk_widget_show_all(StartWindow);

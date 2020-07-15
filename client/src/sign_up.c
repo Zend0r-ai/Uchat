@@ -40,7 +40,6 @@ char *message_do_sing_up(struct reg_info *reg_par) {
         printf("error = %s\n", strerror(errno));
     }
 
-    int res;
     read(clnt->sock, &res, 1024);
 
     switch (res) {
@@ -81,8 +80,8 @@ void *sing_up_thread(void *param)
     char *res = NULL;
 //    char *res = message_connect(((struct reg_info *)param)->ip, ((struct reg_info *)param)->iport);
     //ippppp port
-    // if(!res)
-       // res = message_do_sing_up((struct reg_info *)param);
+    if(!res)
+       res = message_do_sing_up((struct reg_info *)param);
     if(res)
     {
         gtk_label_set_text(GTK_LABEL(statusLabel), res);
