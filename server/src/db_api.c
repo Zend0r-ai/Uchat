@@ -40,7 +40,8 @@ void init_messages(sqlite3 **db) {
 			   "user_id INTEGER NOT NULL,"
 			   "user_nickname TEXT NOT NULL,"
 			   "msg_time INTEGER NOT NULL,"
-			   "msg_body TEXT NOT NULL"
+			   "msg_body TEXT NOT NULL,"
+			   "PRIMARY KEY (user_id, msg_time)"
 			   ");";
 	
 	db_add_table(db, sql_stmt);
@@ -140,6 +141,50 @@ bool db_add_message(sqlite3 **db, t_message new_message) {
 	return true;
 }
 
+bool db_delete_message(sqlite3 **db, t_message del_message) {
+	sqlite3_stmt *res;
+	const char *sql_stmt = "DELETE FROM messages "
+	                       "WHERE user_id = ?1 AND msg_time = ?2;";
+
+	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {
+		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
+		return false;
+	}
+	
+	sqlite3_bind_int(res, 1, del_message.user_id);
+	sqlite3_bind_int(res, 2, del_message.msg_time);
+
+	if (sqlite3_step(res) != SQLITE_DONE) {
+		fprintf(stderr, "Error deleting data: %s\n", sqlite3_errmsg(*db));
+		return false;
+	}
+	sqlite3_finalize(res);
+	return true;
+}
+
+bool db_change_message(sqlite3 **db, t_message change_message) {
+	sqlite3_stmt *res;
+	const char *sql_stmt = "UPDATE messages "
+						   "SET msg_body = '?1' "
+	                       "WHERE user_id = ?2 AND msg_time = ?3;";
+
+	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {
+		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
+		return false;
+	}
+
+	sqlite3_bind_text(res, 1, change_message.msg_body, -1, SQLITE_STATIC);
+	sqlite3_bind_int(res, 2, change_message.user_id);
+	sqlite3_bind_int(res, 3, change_message.msg_time);
+
+	if (sqlite3_step(res) != SQLITE_DONE) {
+		fprintf(stderr, "Error updating data: %s\n", sqlite3_errmsg(*db));
+		return false;
+	}
+	sqlite3_finalize(res);
+	return true;
+}
+
 void db_print_users(sqlite3 **db) {
 	sqlite3_stmt *res;
 	const char *sql_stmt = "SELECT t.* FROM users AS t;";
@@ -173,7 +218,7 @@ t_message *db_get_history(sqlite3 **db, int depth, int *fact_depth) {
 
 	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {
 		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
-		return false;
+		return NULL;
 	}
 	sqlite3_bind_int(res, 1, depth);
    	while (sqlite3_step(res) == SQLITE_ROW) {

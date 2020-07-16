@@ -1,7 +1,7 @@
 #include "server.h"
 
 int main(int argc, const char **argv) {
-
+    //sqlite3 *db;
     argc = 0;
     argv = NULL;
     const char *db_name = "uchat.db";
@@ -72,7 +72,14 @@ int main(int argc, const char **argv) {
                 break;
             }
             printf("New client, fd=%d\n", client_sock); // DEBUG line
-            
+            // printf("users_id connected:"); // DEBUG line
+            // for (int i = 3; i < USERS_LIMIT; i++) { // DEBUG line
+            //     if (connected_users[i] != 0) { // DEBUG line
+            //         printf(" fd[%d]= id[%d]", i, connected_users[i]); // DEBUG line
+            //     } // DEBUG line
+            // } 
+            // printf("\n"); // DEBUG line
+
             EV_SET(&new_event, client_sock, EVFILT_READ, EV_ADD, 0, 0, 0);
             if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
                 fprintf(stderr, "error = %s\n", strerror(errno));
@@ -92,5 +99,7 @@ int main(int argc, const char **argv) {
     sqlite3_close(db);
     close(kq);
     close(server);
+
+    system("leaks uchat_server");
     return 0;
 }
