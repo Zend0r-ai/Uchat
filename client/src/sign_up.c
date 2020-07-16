@@ -208,6 +208,8 @@ void init_sign_up_window()
     mx_css_set(cssStyle, signUpWindow);
     mx_css_set(cssStyle, loginEntry);
     mx_css_set(cssStyle, passwordEntry);
+    mx_css_set(cssStyle, nicknameEntry);
+    mx_css_set(cssStyle, passwordConfirm);
     mx_css_set(cssStyle, regButton);
     regged_in = 0;
     // g_timeout_add(50, check_login, 0);
