@@ -58,7 +58,10 @@ void init_start_window()
     GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/start.glade");
 
     StartWindow = GTK_WIDGET(gtk_builder_get_object(builder,"start_window"));
+
     g_signal_connect(StartWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
+    
+    gtk_window_set_position(GTK_WINDOW(StartWindow), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(StartWindow), "Uchat");
     RegButton = GTK_WIDGET(gtk_builder_get_object(builder,"OpenSignUpWin"));
     g_signal_connect(G_OBJECT(RegButton),"clicked", G_CALLBACK(open_reg_win),NULL);

@@ -29,6 +29,7 @@
 #define SU_ERROR_DATA_LOGIN "Login already exist"
 #define SU_ERROR_DATA_NICKN "Nickname already exist"
 #define SU_ERROR_CONECTION "Server conection problem.."
+#define SU_ERROR_CONFIRM_PASS "Wrong password confirm"
 
 void init_chat_window();
 extern GtkWidget *chatWindow;
@@ -46,6 +47,7 @@ typedef struct s_user_info
 {
     char *login;
     char *password;
+    char *confpass;
     const char *nickname;
 } t_user_info;
 

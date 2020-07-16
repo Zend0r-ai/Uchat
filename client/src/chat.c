@@ -67,6 +67,9 @@ void init_chat_window(char *nickname)
     strcat(buf, nickname);
     gtk_window_set_title(GTK_WINDOW(chatWindow), buf);
     g_signal_connect(chatWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
+
+    
+    gtk_window_set_position(GTK_WINDOW(chatWindow), GTK_WIN_POS_CENTER);
     sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"SendEntry"));
     sendButton = GTK_WIDGET(gtk_builder_get_object(builder,"SendButton"));
 //    g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(do_send),NULL);
