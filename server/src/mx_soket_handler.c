@@ -30,12 +30,10 @@ char *mx_parse_client_message(json_object *jobj, int *connected_users, int fd) {
         return mx_sign_in(jobj, connected_users, fd);
     else if (strcmp(type, "sing_up") == 0)
         return mx_sign_up(jobj);
-    // else if (strcmp(type, "do_message") == 0)
+    // else if (strcmp(type, "new_message") == 0)
     //     return mx_proc_do_message(jobj);
     return NULL;
 }
-
-
 
 
 //int interact(int client_sock) {
@@ -52,14 +50,6 @@ char *mx_parse_client_message(json_object *jobj, int *connected_users, int fd) {
 //    return (int) size;
 //}
 
-// ============= Test User ============
-
-// char *l = "admin";
-// char *n = "ogur4ik";
-// char *p = "pass";
-
-
-
 static char *mx_sign_up(json_object *jobj) {
     const char *log = json_object_get_string(json_object_object_get(jobj, "login"));
     const char *pass = json_object_get_string(json_object_object_get(jobj, "password"));
@@ -68,13 +58,7 @@ static char *mx_sign_up(json_object *jobj) {
     json_object *j_type = json_object_new_string("sign_up_back");
     json_object *j_error = NULL;
 
-    // if (strcmp(log, l) != 0 && strcmp(nick, n) != 0) {
-    //     j_error = json_object_new_int(0);
-    // } else {
-    //     j_error = json_object_new_int(1);
-    // }
     t_user user = {log, pass, nick};
-
     int check = db_check_login_nickname(&db, user);
 
     if (check == -1) {
@@ -111,11 +95,11 @@ static char *mx_sign_in(json_object *jobj, int *connected_users, int fd) {
         //printf("connected_users[%d]=%d\n", fd, mx_count_array(connected_users, user_id));
         j_error = json_object_new_int(0);
         j_nickname = json_object_new_string(user_nickname);
-    } else if (is_connected != 0) {
-        j_error = json_object_new_int(2);
+    } else if (user_id <= 0) {
+        j_error = json_object_new_int(1);
         j_nickname = json_object_new_string("");
-    } else {
-		j_error = json_object_new_int(1);
+    } else if (is_connected != 0) {
+		j_error = json_object_new_int(2);
         j_nickname = json_object_new_string("");
     }
     json_object_object_add(jback, "type", j_type);
