@@ -83,6 +83,7 @@ static char *mx_sign_in(json_object *jobj, int *connected_users, int fd) {
     json_object *j_type = json_object_new_string("log_in_back");
     json_object *j_error = NULL;
     json_object *j_nickname = NULL;
+    json_object *j_id = NULL;
     t_user user = {log, pass, NULL};
 
     int user_id = db_verify_user(&db, user);
@@ -95,6 +96,7 @@ static char *mx_sign_in(json_object *jobj, int *connected_users, int fd) {
         //printf("connected_users[%d]=%d\n", fd, mx_count_array(connected_users, user_id));
         j_error = json_object_new_int(0);
         j_nickname = json_object_new_string(user_nickname);
+        j_id = json_object_new_int(user_id);
     } else if (user_id <= 0) {
         j_error = json_object_new_int(1);
         j_nickname = json_object_new_string("");
@@ -105,6 +107,7 @@ static char *mx_sign_in(json_object *jobj, int *connected_users, int fd) {
     json_object_object_add(jback, "type", j_type);
     json_object_object_add(jback, "error", j_error);
     json_object_object_add(jback, "nickname", j_nickname);
+    json_object_object_add(jback, "user_id", j_id);
 
     return (char *)json_object_to_json_string(jback);
 }
