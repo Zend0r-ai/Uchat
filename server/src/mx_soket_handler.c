@@ -2,7 +2,7 @@
 
 static int mx_count_array(void *arr, int data);
 static char *mx_sign_in(json_object *jobj, int *connected_users,int fd);
-static char *mx_sign_up(json_object *jobj/*, int *connected_users, int fd*/);
+static char *mx_sign_up(json_object *jobj);
 char *mx_parse_client_message(json_object *jobj, int *connected_users, int fd);
 
 void mx_socket_handler(int client_sock, int *connected_users) {
@@ -29,7 +29,7 @@ char *mx_parse_client_message(json_object *jobj, int *connected_users, int fd) {
     if (strcmp(type, "log_in") == 0)
         return mx_sign_in(jobj, connected_users, fd);
     else if (strcmp(type, "sing_up") == 0)
-        return mx_sign_up(jobj/*, connected_users, fd*/);
+        return mx_sign_up(jobj);
     // else if (strcmp(type, "do_message") == 0)
     //     return mx_proc_do_message(jobj);
     return NULL;
@@ -60,7 +60,7 @@ char *mx_parse_client_message(json_object *jobj, int *connected_users, int fd) {
 
 
 
-static char *mx_sign_up(json_object *jobj/*, int *connected_users, int fd*/) {
+static char *mx_sign_up(json_object *jobj) {
     const char *log = json_object_get_string(json_object_object_get(jobj, "login"));
     const char *pass = json_object_get_string(json_object_object_get(jobj, "password"));
     const char *nick = json_object_get_string(json_object_object_get(jobj, "nickname"));
@@ -82,8 +82,7 @@ static char *mx_sign_up(json_object *jobj/*, int *connected_users, int fd*/) {
     } else if (check == -2) {
         j_error = json_object_new_int(2); // incorrect nickname
     } else if (check == 0) {
-        //int user_id = db_add_user(&db, user);
-        //connected_users[fd] = user_id;
+        db_add_user(&db, user);
         j_error = json_object_new_int(0);
     }
 

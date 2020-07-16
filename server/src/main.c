@@ -87,6 +87,7 @@ int main(int argc, const char **argv) {
             if ((new_event.flags & EV_EOF) != 0) {
                 printf("Client disconnected, fd=%lu\n", new_event.ident);
                 connected_users[new_event.ident] = 0;
+                printf("connected_users[%lu], value=%d\n", new_event.ident, connected_users[new_event.ident]);
                 close(new_event.ident);
                 
             }
