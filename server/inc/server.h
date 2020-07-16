@@ -24,6 +24,7 @@
 #define COLS_IN_MESSAGES 4
 #define HISTORY_DEPTH 50
 #define USERS_LIMIT 256
+#define BUFFER_SIZE 2048
 
 sqlite3 *db; // global variable !!!!!!!!
 
@@ -59,6 +60,7 @@ void db_print_users(sqlite3 **db);
 t_message *db_get_history(sqlite3 **db, int depth, int *fact_depth);
 void clear_history(t_message **history, int fact_depth);
 int db_check_login_nickname(sqlite3 **db, t_user user);
-
+bool db_delete_message(sqlite3 **db, t_message del_message);
+bool db_change_message(sqlite3 **db, t_message change_message);
 
 #endif
