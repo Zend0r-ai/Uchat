@@ -11,13 +11,26 @@ int regged_in;
 
 /*====================== GLOBAL =========================*/
 
+void mx_fill_user(t_user_info *to, t_user_info *from) {
+    to->login = from->login;
+    to->password = from->password;
+    to->confpass = from->confpass;
+    to->nickname = from->nickname;
+    to->id = from->id;
+}
+
 char *mx_proc_log_in_back(json_object *jobj, t_user_info *user) {
     int error = json_object_get_int(json_object_object_get(jobj, "error"));
 
-    if (error == 0)
+    if (error == 0){
         user->nickname = json_object_get_string(json_object_object_get(jobj, "nickname"));
-    else
+        user->id = json_object_get_int(json_object_object_get(jobj, "user_id"));
+    }
+    else {
         user->nickname = NULL;
+        user->id = 0;
+    }
+    mx_fill_user(&owner, user);
     switch (error) {
         case 1: return LG_ERROR_DATA;
         case 2: return LG_ERROR_ONLINE;
@@ -35,7 +48,7 @@ char *mx_proc_sign_up_back(json_object *jobj) {
     return NULL;
 }
 
-char *mx_proc_server_mess(char *buffer, t_user_info *user) {
+char *mx_proc_server_back(char *buffer, t_user_info *user) {
     json_object *jobj = json_tokener_parse(buffer);
     const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
     
@@ -43,8 +56,8 @@ char *mx_proc_server_mess(char *buffer, t_user_info *user) {
         return mx_proc_log_in_back(jobj, user);
     else if (strcmp(type, "sign_up_back") == 0)
         return mx_proc_sign_up_back(jobj);
-    // else if (strcmp(type, "do_message") == 0)
-    //     return mx_proc_do_message(jobj);
+    else if (strcmp(type, "do_message") == 0)
+        mx_proc_message_back(jobj);
     return NULL;
 }
 
@@ -73,7 +86,7 @@ char *message_do_sing_up(t_user_info *reg_par) {
             printf("error = %s\n", strerror(errno));
         }
         read(clnt->sock, answ, 1024);
-        return mx_proc_server_mess(answ, reg_par);
+        return mx_proc_server_back(answ, reg_par);
     }
     return SU_ERROR_CONFIRM_PASS;
 }
@@ -118,7 +131,7 @@ void *sing_up_thread(void *param)
     }
     else
     {
-        init_chat_window(((t_user_info *)param)->login);
+        // init_chat_window(((t_user_info *)param)->login);
         regged_in = 1;
         free(param);
         return param;

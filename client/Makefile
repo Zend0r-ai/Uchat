@@ -47,7 +47,7 @@ all: install_json install_libmx install clean
 install:
 	@cp $(SGLD) ./
 	@glib-compile-resources ./src/client.gresource.xml --target=./src/resources.c --generate-source
-	@clang  $(SRCS) $(RSS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI)
+	@clang $(SRCS) $(RSS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI)
 	@printf "\r\33[2K$(NAME) \033[32;1mcreated\033[0m\n"
 
 install_libmx:

@@ -28,7 +28,8 @@ char *message_do_login(t_user_info *log_par) {
 		printf("error = %s\n", strerror(errno));
 	}
 	read(clnt->sock, answ, 1024);
-	return mx_proc_server_mess(answ, log_par);
+	printf("SERVER ::: %s\n", answ);
+	return mx_proc_server_back(answ, log_par);
 }
 
 void *login_thread(void *param)
