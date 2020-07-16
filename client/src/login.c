@@ -46,7 +46,7 @@ void *login_thread(void *param)
 	}
 	else
 	{
-		init_chat_window(((t_user_info *)param)->login);
+		init_chat_window(((t_user_info *)param)->nickname);
 		logged_in = 1;
 		free(param);
 		return param;
@@ -103,14 +103,25 @@ gboolean check_login(void *param)
 // }
 
 
+static void open_start_win(GtkWidget *widget, gpointer data)
+{
+    (void) widget;
+    (void) data;
+    init_start_window();
+    gtk_widget_hide(loginWindow);
+    gtk_widget_show_all(StartWindow);
+}
+
 void init_login_window()
 {
 	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/login.glade");
 
 	loginWindow = GTK_WIDGET(gtk_builder_get_object(builder,"LoginWin"));
-	g_signal_connect(loginWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
+	g_signal_connect(loginWindow,"destroy", G_CALLBACK(open_start_win),NULL);
 
     gtk_window_set_title(GTK_WINDOW(loginWindow), "Sign In");
+
+    gtk_window_set_position(GTK_WINDOW(loginWindow), GTK_WIN_POS_CENTER);
 	loginEntry = GTK_WIDGET(gtk_builder_get_object(builder,"LoginEntry"));
 	passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"PassEntry"));
 	g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(do_login),NULL);

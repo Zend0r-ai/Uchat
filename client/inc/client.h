@@ -23,10 +23,13 @@
 // ======= Sing In defines ========
 #define LG_ERROR_DATA "Wrong login or password"
 #define LG_ERROR_CONECTION "Server conection problem.."
+#define LG_ERROR_ONLINE "User already online"
 
 // ======= Sing Up defines ========
-#define SU_ERROR_DATA "Login or Nickname already exist"
+#define SU_ERROR_DATA_LOGIN "Login already exist"
+#define SU_ERROR_DATA_NICKN "Nickname already exist"
 #define SU_ERROR_CONECTION "Server conection problem.."
+#define SU_ERROR_CONFIRM_PASS "Wrong password confirm"
 
 void init_chat_window();
 extern GtkWidget *chatWindow;
@@ -44,6 +47,7 @@ typedef struct s_user_info
 {
     char *login;
     char *password;
+    char *confpass;
     const char *nickname;
 } t_user_info;
 
