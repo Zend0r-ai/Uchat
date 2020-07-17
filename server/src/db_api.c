@@ -10,7 +10,7 @@ void db_open(sqlite3 **db, const char *db_name) {
 
 void db_add_table(sqlite3 **db, const char *sql_stmt) {
 	sqlite3_stmt *res;
-	
+
 	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {
 		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
 		sqlite3_close(*db);
@@ -31,7 +31,7 @@ void init_users(sqlite3 **db) {
 			   "user_password TEXT NOT NULL,"
 			   "user_nickname TEXT NOT NULL UNIQUE"
 			   ");";
-	
+
 	db_add_table(db, sql_stmt);
 }
 
@@ -43,7 +43,7 @@ void init_messages(sqlite3 **db) {
 			   "msg_body TEXT NOT NULL,"
 			   "PRIMARY KEY (user_id, msg_time)"
 			   ");";
-	
+
 	db_add_table(db, sql_stmt);
 }
 
@@ -58,7 +58,7 @@ int db_verify_user(sqlite3 **db, t_user user) {
 	const char *sql_stmt = "SELECT user_id "
 						   "FROM users "
 						   "WHERE user_login = ?1 AND user_password = ?2;";
-	
+
 	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {
 		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
 		return -1;
@@ -79,7 +79,7 @@ char *db_get_user_nickname(sqlite3 **db, int user_id) {
 	const char *sql_stmt = "SELECT user_nickname "
 						   "FROM users "
 						   "WHERE user_id = ?1;";
-	
+
 	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {
 		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
 		return NULL;
@@ -127,7 +127,7 @@ bool db_add_message(sqlite3 **db, t_message new_message) {
 		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
 		return false;
 	}
-	
+
 	sqlite3_bind_int(res, 1, new_message.user_id);
 	sqlite3_bind_text(res, 2, new_message.user_nickname, -1, SQLITE_STATIC);
 	sqlite3_bind_int(res, 3, new_message.msg_time);
@@ -150,7 +150,7 @@ bool db_delete_message(sqlite3 **db, t_message del_message) {
 		fprintf(stderr, "Failed to execute statement: %s\n", sqlite3_errmsg(*db));
 		return false;
 	}
-	
+
 	sqlite3_bind_int(res, 1, del_message.user_id);
 	sqlite3_bind_int(res, 2, del_message.msg_time);
 
@@ -162,7 +162,7 @@ bool db_delete_message(sqlite3 **db, t_message del_message) {
 	return true;
 }
 
-bool db_change_message(sqlite3 **db, t_message change_message) {
+bool db_update_message(sqlite3 **db, t_message change_message) {
 	sqlite3_stmt *res;
 	const char *sql_stmt = "UPDATE messages "
 						   "SET msg_body = '?1' "
