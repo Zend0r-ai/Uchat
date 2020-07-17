@@ -5,6 +5,10 @@ algorithm = bsearch checksort lsearch quicksort sort
 
 file = get_file_length file_to_str read_line
 
+list = clear_list create_list create_node delete_list foreach_list \
+	foreach_list_reverse get_index list_to_array pop_back \
+	pop_front pop_index push_back push_front push_index sort_list
+
 memory = memccpy memchr memcmp memcpy memdup memmem memmove memrchr memset    \
 	realloc
 
@@ -26,7 +30,7 @@ vector = assign_vector at clear_vector copy_vector create_vector              \
 	delete_vector end erase foreach_vector foreach_vector_reverse get_back    \
 	get_front insert pop_backward push_backward reverse_vector
 
-dirs = algorithm file memory print string type utils vector
+dirs = algorithm file list memory print string type utils vector
 FILES = $(foreach dir, $(dirs), $($(dir):%=$(dir)/mx_%))
 
 SRC_DIR = src/
