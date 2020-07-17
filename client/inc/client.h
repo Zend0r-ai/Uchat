@@ -23,7 +23,7 @@
 
 #define BUF_SIZE 2048
 
-// ======= Sing In defines ========
+/* ======= Sing In defines ======== */
 #define LG_ERROR_DATA "Wrong login or password"
 #define LG_ERROR_CONECTION "Server conection problem.."
 #define LG_ERROR_ONLINE "User already online"
@@ -46,6 +46,8 @@ extern GtkWidget *signUpWindow;
 void init_start_window();
 extern GtkWidget *StartWindow;
 
+/* =============== MESSAGE STRUCTURE =============== */
+
 typedef struct s_user_message
 {
     unsigned int owner_id;
@@ -53,6 +55,10 @@ typedef struct s_user_message
     time_t tv_id;
     const char *nickname;
 } t_user_message;
+
+/* ============= MESSAGE STRUCTURE END ============= */
+
+/* =============== USER STRUCTURE =============== */
 
 typedef struct s_user_info
 {
@@ -63,6 +69,8 @@ typedef struct s_user_info
     const char *nickname;
     unsigned int id;
 } t_user_info;
+
+/* ============= USER STRUCTURE END ============= */
 
 t_user_info owner;
 t_list *history_message_list;

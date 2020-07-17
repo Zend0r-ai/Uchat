@@ -4,6 +4,7 @@ SERVER_DIR = server
 CLIENT_DIR = client
 LIBMX_DIR = libmx
 JSON_DIR = libjson
+SERVER_DB = uchat.db
 
 
 
@@ -32,7 +33,7 @@ uninstall:
 	@$(MAKE_M) $(CLIENT_DIR) $@
 	@$(MAKE_M) $(LIBMX_DIR) $@
 	@$(MAKE_M) $(JSON_DIR) $@
-	@rm -rf $(NAME) $(SERVER_NAME)
+	@rm -rf $(NAME) $(SERVER_NAME) $(SERVER_DB) $(addprefix $(SERVER_DIR)/, $(SERVER_DB))
 
 reinstall: uninstall all
 

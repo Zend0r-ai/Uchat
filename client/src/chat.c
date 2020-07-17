@@ -23,15 +23,16 @@ pthread_t server;
 t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
     int error = json_object_get_int(json_object_object_get(jobj, "error"));
     int user_id = json_object_get_int(json_object_object_get(jobj, "user_id"));
-    char *user_nickname = (char *)json_object_get_string(json_object_object_get(jobj, "user_nickname"));
+    char *user_nickname = mx_strdup((char *)json_object_get_string(json_object_object_get(jobj, "user_nickname")));
     int time_id = json_object_get_int(json_object_object_get(jobj, "msg_time"));
-    char *msg_body = (char *)json_object_get_string(json_object_object_get(jobj, "msg_body"));
+    char *msg_body = mx_strdup((char *)json_object_get_string(json_object_object_get(jobj, "msg_body")));
     t_user_message *message = (t_user_message *)malloc(sizeof(t_user_message));
 
     // if (user_id == owner.id) {
     // 	free(message);
     // 	return NULL;
     // }
+    printf("\nMESSAGE from %s\t:::\t\" %s \"\n", user_nickname, msg_body);
     message->owner_id = user_id;
     message->data = msg_body;
     message->tv_id = time_id;
@@ -61,17 +62,17 @@ void message_new(t_user_message *message) {
 	json_object_object_add(jobj, "user_id", j_id);
 	json_object_object_add(jobj, "user_nickname", j_nick);
 	data = (char *)json_object_to_json_string(jobj);
-	mx_printstr("CLIENT->SERVER: ", 0);
-	write(0, data, strlen(data));                                               /***************/
-	write(0, "\n", strlen("\n"));                                               /***************/
+	// mx_printstr("CLIENT->SERVER: ", 0);											/***************/
+	// write(0, data, strlen(data));                                               	/***************/
+	// write(0, "\n", strlen("\n"));                                               	/***************/
 	if (write(clnt->sock, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
 	read(clnt->sock, answ, BUF_SIZE);
 
-	mx_printstr("SERVER: ", 0);
-	mx_printstr(answ, 0);
-	mx_printstr("\n", 0);
+	// mx_printstr("SERVER: ", 0);													/***************/
+	// mx_printstr(answ, 0);
+	// mx_printstr("\n", 0);
 	free(message);
 	json_object_put(jobj);
 	// system("leaks -q uchat");
@@ -172,42 +173,45 @@ int mx_history_size(json_object *jobj) {
 	return 0;
 }
 
+// void mx_do_history_ready(int fd) {						*
+// 	write(fd, 'r', 1);										*	READY
+// }														*
+
 t_list *mx_create_hst_message_list(int list_size, int fd) {
 	char buffer[BUF_SIZE];
 	json_object *jobj;
 	const char *type = NULL;
 
 	for (int i = 0; i < list_size; ++i) {
-		printf("try to read %d\n", i+1);
 		read(fd, buffer, BUF_SIZE);
-		printf("done\n======= %d\n", i+1);
 		jobj = json_tokener_parse(buffer);
 
 		type = json_object_get_string(json_object_object_get(jobj, "type"));
 		if (strcmp(type, "hst_list") == 0){
-			printf("check pre\n");
-			mx_push_back(history_message_list, (void *)mx_proc_message_back(jobj));
-			printf("check post\n");
+			mx_push_back(history_message_list, mx_proc_message_back(jobj));
 		}
 		printf("JSON MESSAGE ::: \t%s\t%s\n", type, (mx_proc_message_back(jobj))->data);
 		json_object_put(jobj);
 		zero_string(buffer);
-		// mx_strdel((char **)&type);
+		// mx_do_history_ready(fd);
 	}
 	return history_message_list;
 }
 
 /* ============== TEST HISTORY ================*/
 
-// void static *print_node(t_list_node * node) {
-// 	printf("===============================\n");
-// 	printf("MESSAGE #%d\t::: %s\n", ((t_user_message *)(node->data))->tv_id, ((t_user_message *)(node->data))->data);
-// 	printf("===============================\n");
-// }
+void static print_node(t_list_node * node) {
+	t_user_message * mess = (t_user_message *)(node->data);
+	printf("\n================================================================================\n");
+	printf("MESSAGE FROM \"%s\"\t#%lu\t:::\t%s\n", mess->nickname, mess->tv_id, mess->data);
+	printf("================================================================================\n");
+}
 
-// void static print_history() {
-// 	void mx_foreach_list(t_list *list, print_node);
-// }
+void static print_history(t_list *list) {
+	system("clear");
+	printf("\n\t\t\t::: HISTORY LIST :::\n");
+	mx_foreach_list(list, print_node);
+}
 
 
 /* ============== TEST HISTORY END ==============*/
@@ -220,7 +224,7 @@ void mx_do_history_request(int fd) {
 
 	data = json_object_to_json_string(jobj);
 	write(fd, data, strlen(data));
-	mx_strdel((char **)&data);
+	// mx_strdel((char **)&data);
 }
 
 void message_request_history(void) {
@@ -229,24 +233,22 @@ void message_request_history(void) {
 	char answ[BUF_SIZE];
 	json_object *jobj;
 
-	printf("*\n");
+	// printf("*\n");
 	mx_do_history_request(clnt->sock);
-	printf("**\n");
-	zero_string(answ);
-	printf("***\n");
+	// printf("**\n");
+	zero_string(answ); /////////// не обнулять а через рид
+	// printf("***\n");
 	read(clnt->sock, answ, BUF_SIZE);
 	if (strcmp("no_history", answ) == 0)
 		return;
-	printf("****\n");
+	// printf("****\n");
 	jobj = json_tokener_parse(answ);
-	printf("*****\n");
+	// printf("*****\n");
 	int hst_size = mx_history_size(jobj);
-	printf("******\n");
+	// printf("******\n");
 	mx_create_hst_message_list(hst_size, clnt->sock);
-	printf("*******\n");
+	// printf("*******\n");
 	json_object_put(jobj);
-
-
 }
 
 void init_chat_window(char *nickname)
@@ -272,6 +274,7 @@ void init_chat_window(char *nickname)
 	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"scrolledWindow"));
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 	message_request_history();
+	print_history(history_message_list);
 	// mx_do_history_request(3);
 	pthread_create(&server, 0, read_server_thread, 0);
 }
