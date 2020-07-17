@@ -22,14 +22,34 @@ pthread_t server;
 // 	pthread_create(&watcher, 0, watcher_thread, 0);
 // }
 
-int mx_get_index_history_message(t_list *list, int user_id, int message_id) {
-	{
-		t_list_node *node = f && list ? list->head : NULL;
-
-    	for (; node; node = node->next)
-        	f(node);
+bool mx_is_message_by_data (t_list_node *node, int owner_id, int message_id, t_user_message **message) {
+	if (((t_user_message *)(node->data))->tv_id == message_id
+		&& ((t_user_message *)(node->data))->owner_id == owner_id) {
+		if (message)
+			*message = (t_user_message *)(node->data);
+		return true;
 	}
+	return false;
 }
+
+int mx_get_index_history_message(t_list *list, int owner_id, int message_id, t_user_message **message) {
+	t_list_node *node = list ? list->head : NULL;
+	int i = 0;
+   	for (; node; node = node->next, i++)
+   		if (mx_is_message_by_data(node, owner_id, message_id, message))
+       		return i;
+    return -1;
+}
+
+// int mx_get_index_history_message(t_list *list, int user_id, int message_id) {
+// 	{
+// 		t_list_node *node = list ? list->head : NULL;
+// 		int i = 0;
+
+//     	for (; node; node = node->next, i++)
+//         	mx_is_message_by_data(node);
+// 	}
+// }
 
 t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
     int error = json_object_get_int(json_object_object_get(jobj, "error"));
@@ -184,9 +204,9 @@ int mx_history_size(json_object *jobj) {
 	return 0;
 }
 
-// void mx_do_history_ready(int fd) {						*
-// 	write(fd, 'r', 1);										*	READY
-// }														*
+void mx_do_history_ready(int fd) {						//*
+	write(fd, "r", 1);									//	*	READY
+}														//*
 
 t_list *mx_create_hst_message_list(int list_size, int fd) {
 	char buffer[BUF_SIZE];
@@ -194,6 +214,7 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 	const char *type = NULL;
 
 	for (int i = 0; i < list_size; ++i) {
+		mx_do_history_ready(fd);
 		read(fd, buffer, BUF_SIZE);
 		jobj = json_tokener_parse(buffer);
 
@@ -204,7 +225,6 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 		printf("JSON MESSAGE ::: \t%s\t%s\n", type, (mx_proc_message_back(jobj))->data);
 		json_object_put(jobj);
 		zero_string(buffer);
-		// mx_do_history_ready(fd);
 	}
 	return history_message_list;
 }
@@ -212,10 +232,13 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 /* ============== TEST HISTORY ================*/
 
 void static print_node(t_list_node * node) {
+	static int i = 0;
 	t_user_message * mess = (t_user_message *)(node->data);
-	printf("\n================================================================================\n");
-	printf("MESSAGE FROM \"%s\"\t#%lu\t:::\t%s\n", mess->nickname, mess->tv_id, mess->data);
-	printf("================================================================================\n");
+
+	printf("\n=================================================================================================\n");
+	printf("%d)\tMESSAGE FROM \"%s\"\t#%lu\tuser id: %d\t:::\t%s\n", i, mess->nickname, mess->tv_id, mess->owner_id, mess->data);
+	printf("=================================================================================================\n");
+	i++;
 }
 
 void static print_history(t_list *list) {
@@ -265,7 +288,7 @@ void message_request_history(void) {
 void init_chat_window(char *nickname)
 {
 	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/chat.glade");
-	GtkWidget *row, *box1;
+	GtkWidget *box1;
 	gint h, w;
 	history_message_list = mx_create_list();
 	chatWindow = GTK_WIDGET(gtk_builder_get_object(builder,"ChatWindow"));
@@ -287,8 +310,24 @@ void init_chat_window(char *nickname)
 	printf("я тут\n");
 	print_history(history_message_list);
 
+
+
+	/**************** TEST ***************/
+
+	// int o_id = 3;
+	// int m_id = 1594995841;
+	// t_user_message *message = NULL;
+	// int indx = mx_get_index_history_message(history_message_list, o_id, m_id, &message);
+	// printf("INDEX ::: #%d\t:::\t\" %p \"\n", indx, message);
+
+	/************* TEST END **************/
+
+
+	box1 = gtk_label_new("ляяяяяя яяяяяя каааакояяя каааакояяякаааакояяякаа");
+	gtk_label_set_line_wrap(GTK_LABEL(box1), TRUE);
 	messageBox1 = gtk_box_new (FALSE, 0);
-	messageButton1 = gtk_button_new_with_label("ляяяяяя яяяяяя каааакооооойляяяяяя каааакооооой");
+	messageButton1 = gtk_button_new();
+	gtk_container_add (GTK_CONTAINER (messageButton1), box1);
 	gtk_widget_set_name(messageBox1, "inputMess");
 
 	gtk_widget_set_halign (messageBox1, GTK_ALIGN_END);
