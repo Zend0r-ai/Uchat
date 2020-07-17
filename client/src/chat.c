@@ -3,12 +3,14 @@
 #define REQUEST_HISTORY 10
 
 GtkWidget *chatWindow;
-GtkWidget *sendEntry, *sendButton;
+GtkWidget *sendEntry, *sendButton, *messageButton1, *messageButton2;
+GtkWidget *messageBox1, *messageBox2;
 GtkWidget *statusLabel;
 GtkWidget *messagesTreeView;
 GtkAdjustment *vAdjust;
 GtkScrolledWindow *scrolledWindow;
 GtkListStore *messagesListStore;
+GtkListBox *messageList;
 pthread_t watcher;
 pthread_t server;
 
@@ -19,6 +21,15 @@ pthread_t server;
 // 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 // 	pthread_create(&watcher, 0, watcher_thread, 0);
 // }
+
+int mx_get_index_history_message(t_list *list, int user_id, int message_id) {
+	{
+		t_list_node *node = f && list ? list->head : NULL;
+
+    	for (; node; node = node->next)
+        	f(node);
+	}
+}
 
 t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
     int error = json_object_get_int(json_object_object_get(jobj, "error"));
@@ -254,27 +265,87 @@ void message_request_history(void) {
 void init_chat_window(char *nickname)
 {
 	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/chat.glade");
-
+	GtkWidget *row, *box1;
+	gint h, w;
 	history_message_list = mx_create_list();
-	chatWindow = GTK_WIDGET(gtk_builder_get_object(builder,"chatWindow"));
+	chatWindow = GTK_WIDGET(gtk_builder_get_object(builder,"ChatWindow"));
 	char buf[100] = "uchat : ";
 	strcat(buf, nickname);
 	gtk_window_set_title(GTK_WINDOW(chatWindow), buf);
 	g_signal_connect(chatWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
 
-	
 	gtk_window_set_position(GTK_WINDOW(chatWindow), GTK_WIN_POS_CENTER);
-	sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"sendEntry"));
-	sendButton = GTK_WIDGET(gtk_builder_get_object(builder,"sendButton"));
+	sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"SendEntry"));
+	sendButton = GTK_WIDGET(gtk_builder_get_object(builder,"SendButton"));
 	g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(do_send),NULL);
 	g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(do_send),NULL);
-//    statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"statusLabel"));
-//    messagesTreeView = GTK_WIDGET(gtk_builder_get_object(builder,"messagesTreeView"));
-//    messagesListStore = GTK_LIST_STORE(gtk_builder_get_object(builder,"messagesListStore"));
-	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"scrolledWindow"));
+	//    statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"statusLabel"));
+	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"ScrolledWindow"));
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
+	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
 	message_request_history();
+	printf("я тут\n");
 	print_history(history_message_list);
-	// mx_do_history_request(3);
-	pthread_create(&server, 0, read_server_thread, 0);
+
+	messageBox1 = gtk_box_new (FALSE, 0);
+	messageButton1 = gtk_button_new_with_label("ляяяяяя яяяяяя каааакооооойляяяяяя каааакооооой");
+	gtk_widget_set_name(messageBox1, "inputMess");
+
+	gtk_widget_set_halign (messageBox1, GTK_ALIGN_END);
+	gtk_container_add (GTK_CONTAINER (messageBox1), messageButton1);
+	gtk_list_box_insert(messageList, messageBox1, 0);
+	GtkCssProvider *cssStyle;
+	GtkCssProvider *cssStyle2;
+	GtkCssProvider *cssStyle3;
+	    cssStyle = gtk_css_provider_new();
+	    cssStyle2 = gtk_css_provider_new();
+	    cssStyle3 = gtk_css_provider_new();
+
+	    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+	    gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
+	    gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
+
+	    mx_css_set(cssStyle, chatWindow);
+	    mx_css_set(cssStyle, sendButton);
+	    mx_css_set(cssStyle, sendEntry);
+	    mx_css_set(cssStyle2, messageButton1);
+
+	messageBox2 = gtk_box_new (FALSE, 0);
+	messageButton2 = gtk_button_new_with_label("Шооооо");
+
+	gtk_widget_set_name(messageBox2, "outMess");
+	gtk_container_add (GTK_CONTAINER (messageBox2), messageButton2);
+	gtk_list_box_insert(messageList, messageBox2, 1);
+
+	    mx_css_set(cssStyle3, messageButton2);
+	 // mx_do_history_request(3);
+	 pthread_create(&server, 0, read_server_thread, 0);
 }
+
+// void init_chat_window(char *nickname)
+// {
+// 	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/chat.glade");
+
+// 	history_message_list = mx_create_list();
+// 	chatWindow = GTK_WIDGET(gtk_builder_get_object(builder,"chatWindow"));
+// 	char buf[100] = "uchat : ";
+// 	strcat(buf, nickname);
+// 	gtk_window_set_title(GTK_WINDOW(chatWindow), buf);
+// 	g_signal_connect(chatWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
+
+	
+// 	gtk_window_set_position(GTK_WINDOW(chatWindow), GTK_WIN_POS_CENTER);
+// 	sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"sendEntry"));
+// 	sendButton = GTK_WIDGET(gtk_builder_get_object(builder,"sendButton"));
+// 	g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(do_send),NULL);
+// 	g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(do_send),NULL);
+// //    statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"statusLabel"));
+// //    messagesTreeView = GTK_WIDGET(gtk_builder_get_object(builder,"messagesTreeView"));
+// //    messagesListStore = GTK_LIST_STORE(gtk_builder_get_object(builder,"messagesListStore"));
+// 	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"scrolledWindow"));
+// 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
+// 	message_request_history();
+// 	print_history(history_message_list);
+// 	// mx_do_history_request(3);
+// 	pthread_create(&server, 0, read_server_thread, 0);
+// }

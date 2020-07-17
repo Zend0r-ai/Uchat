@@ -49,6 +49,7 @@ int main(int argc, const char **argv) {
         close(server);
         return -1;
     }
+
     struct timespec timeout;
     timeout.tv_sec = 1;
     timeout.tv_nsec = 0;
@@ -85,7 +86,8 @@ int main(int argc, const char **argv) {
                 fprintf(stderr, "error = %s\n", strerror(errno));
                 break;
             }
-        } else {
+        } 
+        else {
             mx_socket_handler(new_event.ident, connected_users);
             if ((new_event.flags & EV_EOF) != 0) {
                 printf("Client disconnected, fd=%lu\n", new_event.ident); // DEBUG line
