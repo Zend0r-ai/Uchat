@@ -99,7 +99,7 @@ void message_new(t_user_message *message) {
 	if (write(clnt->sock, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
-	read(clnt->sock, answ, BUF_SIZE);
+	// read(clnt->sock, answ, BUF_SIZE);
 
 	// mx_printstr("SERVER: ", 0);													/***************/
 	// mx_printstr(answ, 0);
@@ -157,12 +157,14 @@ void *read_server_thread(void * par) {
 	char *data = NULL;
 	char answ[BUF_SIZE];
 	bool flag = true;
+	int tail = 0;
 
 	while (flag) {
-		if (read(clnt->sock, answ, BUF_SIZE) == -1) {
+		if ((tail = read(clnt->sock, answ, BUF_SIZE)) == -1) {
 			printf("error = %s\n", strerror(errno));
 			flag = false;
 		}
+		answ[tail - 1] = '\0';
 		mx_printstr("SERVER THREAD: ", 0);
 		mx_printstr(answ, 0);
 		mx_printstr("\n", 0);
