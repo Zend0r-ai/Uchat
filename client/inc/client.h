@@ -68,6 +68,7 @@ typedef struct s_user_info
     char *confpass;
     const char *nickname;
     unsigned int id;
+    char *last_server_back;
 } t_user_info;
 
 /* ============= USER STRUCTURE END ============= */
@@ -83,7 +84,7 @@ t_client_info *get_client_info(void);
 
 void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
 
-char *mx_proc_server_back(char *buffer, t_user_info *user);
+void *mx_proc_server_back(char *buffer, t_user_info *user);
 char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
 char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);

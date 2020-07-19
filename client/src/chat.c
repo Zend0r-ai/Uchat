@@ -22,11 +22,36 @@ pthread_t server;
 // 	pthread_create(&watcher, 0, watcher_thread, 0);
 // }
 
-bool mx_is_message_by_data (t_list_node *node, int owner_id, int message_id, t_user_message **message) {
+void static print_history(t_list *history_message_list);
+
+void mx_messdel(t_user_message **message) {
+	if (message && *message) {
+		mx_strdel((char **)&((*message)->nickname));
+    	mx_strdel(&((*message)->data));
+    	free(*message);
+    	*message = NULL;
+	}
+}
+
+t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body) {
+	t_user_message *new = NULL;
+
+	if (message) {
+		new = (t_user_message *)malloc(sizeof(t_user_message));
+		new->owner_id = message->owner_id;
+		new->data = strdup(msg_body);
+		new->tv_id = message->tv_id;
+		new->nickname = message->nickname;
+	}
+	return new;
+}
+
+bool mx_is_message_by_data(t_list_node *node, int owner_id, int message_id, t_user_message **message) {
 	if (((t_user_message *)(node->data))->tv_id == message_id
 		&& ((t_user_message *)(node->data))->owner_id == owner_id) {
-		if (message)
-			*message = (t_user_message *)(node->data);
+		if (message) {
+			*message = /*(t_user_message *)*/(node->data);
+		}
 		return true;
 	}
 	return false;
@@ -35,6 +60,7 @@ bool mx_is_message_by_data (t_list_node *node, int owner_id, int message_id, t_u
 int mx_get_index_history_message(t_list *list, int owner_id, int message_id, t_user_message **message) {
 	t_list_node *node = list ? list->head : NULL;
 	int i = 0;
+
    	for (; node; node = node->next, i++)
    		if (mx_is_message_by_data(node, owner_id, message_id, message))
        		return i;
@@ -57,45 +83,39 @@ t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
     char *user_nickname = mx_strdup((char *)json_object_get_string(json_object_object_get(jobj, "user_nickname")));
     int time_id = json_object_get_int(json_object_object_get(jobj, "msg_time"));
     char *msg_body = mx_strdup((char *)json_object_get_string(json_object_object_get(jobj, "msg_body")));
-    t_user_message *message = (t_user_message *)malloc(sizeof(t_user_message));
+    t_user_message *message = NULL;
 
-    // if (user_id == owner.id) {
-    // 	free(message);
-    // 	return NULL;
-    // }
-    printf("\nMESSAGE from %s\t:::\t\" %s \"\n", user_nickname, msg_body);
-    message->owner_id = user_id;
-    message->data = msg_body;
-    message->tv_id = time_id;
-    message->nickname = user_nickname;
-
+    if (error == 0) {
+    	message = (t_user_message *)malloc(sizeof(t_user_message));
+	    printf("\nMESSAGE from %s\t:::\t\" %s \"\n", user_nickname, msg_body);
+	    message->owner_id = user_id;
+	    message->data = msg_body;
+	    message->tv_id = time_id;
+	    message->nickname = user_nickname;
+	}
+	printf("here\n");
     return message;
-    // switch (error) {
-    //     case 1: return SU_ERROR_DATA_LOGIN;
-    //     case 2: return SU_ERROR_DATA_NICKN;
-    // }
-
 }
 
-void message_new(t_user_message *message) {
+void mx_do_message_request(t_user_message *message, const char *request) {
 	t_client_info *clnt = get_client_info();
 	char *data = NULL;
 	char answ[BUF_SIZE];
 
 	json_object *jobj = json_object_new_object();
-	json_object *j_type = json_object_new_string("new_message");
+	json_object *j_type = json_object_new_string(request);
 	json_object *j_mess = json_object_new_string(message->data);
 	json_object *j_id = json_object_new_int(message->owner_id);
+	json_object *j_msg_id = json_object_new_int((int)(message->tv_id));
 	json_object *j_nick = json_object_new_string(message->nickname);
 
 	json_object_object_add(jobj, "type", j_type);
 	json_object_object_add(jobj, "msg_body", j_mess);
+	json_object_object_add(jobj, "msg_time", j_msg_id);
 	json_object_object_add(jobj, "user_id", j_id);
 	json_object_object_add(jobj, "user_nickname", j_nick);
 	data = (char *)json_object_to_json_string(jobj);
-	// mx_printstr("CLIENT->SERVER: ", 0);											/***************/
-	// write(0, data, strlen(data));                                               	/***************/
-	// write(0, "\n", strlen("\n"));                                               	/***************/
+	printf("CLIENT->SERVER: %s", data);                                            	/***************/
 	if (write(clnt->sock, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
@@ -118,7 +138,7 @@ void *watcher_thread(void *param)
 	struct tm *nowtm;
 	char *author = NULL, *body = NULL;
 	char timebuf[64];
-	message_new((t_user_message *)param);
+	mx_do_message_request((t_user_message *)param, "new_message");
 	// message_request_history(REQUEST_HISTORY);
 	// while(1)
 	// {
@@ -152,22 +172,46 @@ void *watcher_thread(void *param)
 	return param;
 }
 
-void *read_server_thread(void * par) {
+void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
+	char *type = user->last_server_back;
+	t_user_message *message = NULL;
+	int index_msg = 0;
+
+    if (strcmp(type, "new_message_back") == 0) {
+    	mx_push_back(history_message_list, new_message);
+    }
+    else if (strcmp(type, "update_message_back") == 0) {
+    	index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
+    	message->data = new_message->data;
+    }
+    else if (strcmp(type, "delete_message_back") == 0) {
+    	index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
+    	mx_pop_index(history_message_list, index_msg);
+    	mx_messdel(&message);
+    }
+}
+
+void *read_server_thread(void *par) {
 	t_client_info *clnt = get_client_info();
 	char *data = NULL;
 	char answ[BUF_SIZE];
 	bool flag = true;
 	int tail = 0;
+	t_user_message *message;
 
 	while (flag) {
 		if ((tail = read(clnt->sock, answ, BUF_SIZE)) == -1) {
 			printf("error = %s\n", strerror(errno));
 			flag = false;
 		}
-		answ[tail - 1] = '\0';
+		answ[tail] = '\0';
+		message = mx_proc_server_back(answ, &owner);
+		mx_switch_message_back(&owner, message);
 		mx_printstr("SERVER THREAD: ", 0);
 		mx_printstr(answ, 0);
 		mx_printstr("\n", 0);
+		print_history(history_message_list);
+
 	}
 	return par;
 }
@@ -309,7 +353,6 @@ void init_chat_window(char *nickname)
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
 	message_request_history();
-	printf("я тут\n");
 	print_history(history_message_list);
 
 
@@ -323,6 +366,8 @@ void init_chat_window(char *nickname)
 	// printf("INDEX ::: #%d\t:::\t\" %p \"\n", indx, message);
 
 	/************* TEST END **************/
+
+
 
 
 	box1 = gtk_label_new("ляяяяяя яяяяяя каааакояяя каааакояяякаааакояяякаа");
@@ -361,6 +406,19 @@ void init_chat_window(char *nickname)
 	    mx_css_set(cssStyle3, messageButton2);
 	 // mx_do_history_request(3);
 	 pthread_create(&server, 0, read_server_thread, 0);
+
+	 	/************* TEST EDIT *************/
+
+	// for (int i = 0; i < 2000000000; i++);
+	// t_user_message *message = history_message_list->head->next->next->data;
+
+	// t_user_message *temp = mx_create_edit_message(message, "HELLO, WORLD!");
+	// printf("TEMP :%s\n", temp->data);
+	// mx_do_message_request(temp, "update_message");
+	// // print_history(history_message_list);
+	// printf("<<<<<<<<<<< %s >>>>>>>>>>>>\n", (char *)(((t_user_message *)history_message_list->head->next->next->data)->data));
+
+	/*********** TEST EDIT END ***********/
 }
 
 // void init_chat_window(char *nickname)

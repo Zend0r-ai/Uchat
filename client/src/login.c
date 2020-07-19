@@ -29,6 +29,7 @@ char *message_do_login(t_user_info *log_par) {
 	}
 	read(clnt->sock, answ, 1024);
 	printf("SERVER ::: %s\n", answ);
+	json_object_put(jobj);
 	return mx_proc_server_back(answ, log_par);
 }
 
