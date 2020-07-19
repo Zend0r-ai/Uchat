@@ -11,10 +11,7 @@ int main(int argc, const char **argv) {
     for (int i = 0; i < USERS_LIMIT; i++)
         connected_users[i] = 0;
 
-//    if (mx_daemon(argv[1]) == -1) {
-//        printf("error 1 = %s\n", strerror(errno));
-//        return -1;
-//    }
+    // mx_demon();
     int server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server == -1) {
         fprintf(stderr, "error = %s\n", strerror(errno));
@@ -22,7 +19,7 @@ int main(int argc, const char **argv) {
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(5003);
+    addr.sin_port = htons(5000);
     //inet_aton("10.111.3.11", &addr.sin_addr);
     inet_aton("127.0.0.1", &addr.sin_addr);
 

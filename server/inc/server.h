@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +46,7 @@ typedef struct s_message {
 
 typedef bool (*msg_handler)(sqlite3**, t_message);
 
-int mx_daemon(const char *log_file);
+void mx_demon();
 void mx_socket_handler(int client_sock, int *connected_users);
 //int interact(int client_sock);
 
