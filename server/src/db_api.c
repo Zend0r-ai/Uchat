@@ -165,7 +165,7 @@ bool db_delete_message(sqlite3 **db, t_message del_message) {
 bool db_update_message(sqlite3 **db, t_message change_message) {
 	sqlite3_stmt *res;
 	const char *sql_stmt = "UPDATE messages "
-						   "SET msg_body = '?1' "
+						   "SET msg_body = ?1 "
 	                       "WHERE user_id = ?2 AND msg_time = ?3;";
 
 	if (sqlite3_prepare_v2(*db, sql_stmt, -1, &res, 0) != SQLITE_OK) {

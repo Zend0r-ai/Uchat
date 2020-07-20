@@ -48,7 +48,6 @@ typedef bool (*msg_handler)(sqlite3**, t_message);
 
 void mx_demon();
 void mx_socket_handler(int client_sock, int *connected_users);
-//int interact(int client_sock);
 
 void db_open(sqlite3 **db, const char *db_name);
 void db_add_table(sqlite3 **db, const char *sql_stmt);
