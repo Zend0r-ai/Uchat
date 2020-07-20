@@ -352,7 +352,7 @@ void *watcher_thread(void *param)
 	char *author = NULL, *body = NULL;
 	char timebuf[64];
 	mx_do_message_request((t_user_message *)param, "new_message");
-	mx_messdel((t_user_message **)&param);
+	// mx_messdel((t_user_message **)&param);
 	// message_request_history(REQUEST_HISTORY);
 	// while(1)
 	// {
@@ -386,14 +386,12 @@ void *watcher_thread(void *param)
 	return param;
 }
 
-void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
-	char *type = user->last_server_back;
-	t_user_message *message = NULL;
-	int index_msg = 0;
-	GtkWidget *temp;
-    if (strcmp(type, "new_message_back") == 0) {
-    	mx_push_back(history_message_list, new_message);
-    	if(new_message->owner_id == owner.id){
+void mx_add_message_widget(t_user_message *new_message) {
+	GtkWidget *temp = NULL;
+
+	if (!new_message)
+		return;
+	if(new_message->owner_id == owner.id){
     		temp = mx_create_out_mess(new_message->data, new_message->nickname);
     	}
     	else {
@@ -401,6 +399,17 @@ void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
     	}
     	gtk_widget_show_all(temp);
     	gtk_list_box_insert(messageList, temp, -1);
+}
+
+void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
+	char *type = user->last_server_back;
+	t_user_message *message = NULL;
+	int index_msg = 0;
+
+    if (strcmp(type, "new_message_back") == 0) {
+    	mx_push_back(history_message_list, new_message);
+    	mx_add_message_widget(new_message);
+    	
     }
     else if (strcmp(type, "update_message_back") == 0) {
     	index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
@@ -521,19 +530,23 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 	char buffer[BUF_SIZE];
 	json_object *jobj;
 	const char *type = NULL;
+	t_user_message *message = NULL;
 
-	for (int i = 0; i < list_size; ++i) {
+	for (int i = 0; i < list_size; ++i, message = NULL) {
 		mx_do_history_ready(fd);
 		read(fd, buffer, BUF_SIZE);
 		jobj = json_tokener_parse(buffer);
 
 		type = json_object_get_string(json_object_object_get(jobj, "type"));
-		if (strcmp(type, "hst_list") == 0){
-			mx_push_back(history_message_list, mx_proc_message_back(jobj));
+		if (strcmp(type, "hst_list") == 0) {
+			message = mx_proc_message_back(jobj);
+			mx_push_back(history_message_list, message);
+			// mx_add_message_widget(message);
 		}
 		printf("JSON MESSAGE ::: \t%s\t%s\n", type, (mx_proc_message_back(jobj))->data);
 		json_object_put(jobj);
 		zero_string(buffer);
+
 	}
 	return history_message_list;
 }
