@@ -22,6 +22,210 @@ pthread_t server;
 // 	pthread_create(&watcher, 0, watcher_thread, 0);
 // }
 
+
+int show_popup(GtkWidget *widget, GdkEvent *event) {
+
+	const gint RIGHT_CLICK = 3;
+
+	if (event->type == GDK_BUTTON_PRESS) {
+
+		GdkEvent *bevent = (GdkEvent *) event;
+
+		gtk_menu_popup_at_pointer(GTK_MENU(widget), bevent);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text){
+	GtkWidget *popup_menu;
+	GtkWidget *row;
+	GtkWidget *in_row;
+	GtkWidget *nickname;
+	GtkWidget *time;
+	GtkWidget *message_label;
+	GtkWidget *message;
+	GtkWidget *void_box;
+	GtkWidget *container;
+	GtkWidget *tool_box;
+	// GtkWidget *edit;
+	GtkWidget *delete;
+	GtkWidget *ebox;
+	tool_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
+	// edit = gtk_button_new();
+	delete = gtk_button_new();
+	// gtk_container_add (GTK_CONTAINER(tool_box), edit);
+	gtk_container_add (GTK_CONTAINER(tool_box), delete);
+
+	popup_menu = gtk_menu_new();
+
+	GtkCssProvider *cssStyle2;
+	GtkCssProvider *cssStyle3;
+	cssStyle2 = gtk_css_provider_new();
+	cssStyle3 = gtk_css_provider_new();
+
+	gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
+	gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
+
+	row = gtk_list_box_row_new ();
+
+	gtk_list_box_row_set_activatable(GTK_LIST_BOX_ROW(row), FALSE); // !
+	gtk_list_box_row_set_selectable(GTK_LIST_BOX_ROW(row), FALSE); // !
+
+	in_row = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
+	nickname = gtk_label_new(login_text);
+	gtk_widget_set_halign (nickname, GTK_ALIGN_START);
+	message_label = gtk_label_new(message_text);
+	gtk_label_set_line_wrap(GTK_LABEL(message_label), TRUE);
+	message = gtk_button_new();
+	gtk_container_add (GTK_CONTAINER(message), message_label);
+	time = gtk_label_new("10:20");
+	void_box = gtk_box_new(FALSE, 0);
+	gtk_container_add (GTK_CONTAINER(void_box), time);
+	gtk_box_set_baseline_position(GTK_BOX(void_box), GTK_BASELINE_POSITION_CENTER);
+
+	ebox = gtk_event_box_new();
+
+	gtk_container_add (GTK_CONTAINER(ebox), message);
+	gtk_container_add (GTK_CONTAINER(in_row), ebox);
+	gtk_container_add (GTK_CONTAINER(in_row), nickname);
+
+	container = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
+
+	gtk_container_add (GTK_CONTAINER(container), in_row);
+	gtk_container_add (GTK_CONTAINER(container), void_box);
+
+	//   edit = gtk_menu_item_new_with_label("Edit");
+	// gtk_widget_show(edit);
+	// gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), edit);
+
+	delete = gtk_menu_item_new_with_label("Delete");
+	gtk_widget_show(delete);
+	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
+
+	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
+	G_CALLBACK(show_popup), popup_menu);
+
+	gtk_container_add (GTK_CONTAINER(row), container);
+	gtk_widget_set_halign (row, GTK_ALIGN_START);
+
+	gtk_widget_set_name(message, "row_to");
+	// gtk_widget_set_name(edit, "edit");
+	gtk_widget_set_name(delete, "edit");
+	gtk_widget_set_name(popup_menu, "popup_menu");
+	gtk_widget_set_name(nickname, "nickname");
+	gtk_widget_set_name(time, "time");
+	gtk_widget_set_name(tool_box, "popup_menu");
+	gtk_widget_set_name(message_label, "message");
+
+	mx_css_set(cssStyle3, message);
+	// mx_css_set(cssStyle2, edit);
+	mx_css_set(cssStyle3, delete);
+	mx_css_set(cssStyle3, popup_menu);
+	mx_css_set(cssStyle3, nickname);
+	mx_css_set(cssStyle3, tool_box);
+	mx_css_set(cssStyle3, time);
+	mx_css_set(cssStyle3, message_label);
+
+	return row;
+}
+
+GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text){
+	GtkWidget *popup_menu;
+	GtkWidget *row;
+	GtkWidget *in_row;
+	GtkWidget *nickname;
+	GtkWidget *time;
+	GtkWidget *message_label;
+	GtkWidget *message;
+	GtkWidget *void_box;
+	GtkWidget *container;
+	GtkWidget *tool_box;
+	GtkWidget *edit;
+	GtkWidget *delete;
+	GtkWidget *ebox;
+
+	tool_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
+	edit = gtk_button_new();
+	delete = gtk_button_new();
+	gtk_container_add (GTK_CONTAINER(tool_box), edit);
+	gtk_container_add (GTK_CONTAINER(tool_box), delete);
+
+	popup_menu = gtk_menu_new();
+
+	GtkCssProvider *cssStyle2;
+	GtkCssProvider *cssStyle3;
+	cssStyle2 = gtk_css_provider_new();
+	cssStyle3 = gtk_css_provider_new();
+
+	gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
+	gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
+
+	row = gtk_list_box_row_new ();
+
+	gtk_list_box_row_set_activatable(GTK_LIST_BOX_ROW(row), FALSE); // !
+	gtk_list_box_row_set_selectable(GTK_LIST_BOX_ROW(row), FALSE); // !
+
+	in_row = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
+	nickname = gtk_label_new(login_text);
+	gtk_widget_set_halign (nickname, GTK_ALIGN_END);
+	message_label = gtk_label_new(message_text);
+	gtk_label_set_line_wrap(GTK_LABEL(message_label), TRUE);
+	message = gtk_button_new();
+	gtk_container_add (GTK_CONTAINER(message), message_label);
+	time = gtk_label_new("10:20");
+	void_box = gtk_box_new(FALSE, 0);
+	gtk_container_add (GTK_CONTAINER(void_box), time);
+	gtk_box_set_baseline_position(GTK_BOX(void_box), GTK_BASELINE_POSITION_CENTER);
+
+	ebox = gtk_event_box_new();
+
+	gtk_container_add (GTK_CONTAINER(ebox), message);
+	gtk_container_add (GTK_CONTAINER(in_row), ebox);
+	gtk_container_add (GTK_CONTAINER(in_row), nickname);
+
+	container = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
+
+	gtk_container_add (GTK_CONTAINER(container), void_box);
+	gtk_container_add (GTK_CONTAINER(container), in_row);
+
+	edit = gtk_menu_item_new_with_label("Edit");
+	gtk_widget_show(edit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), edit);
+
+	delete = gtk_menu_item_new_with_label("Delete");
+	gtk_widget_show(delete);
+	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
+
+	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
+	G_CALLBACK(show_popup), popup_menu);
+
+	gtk_container_add (GTK_CONTAINER(row), container);
+	gtk_widget_set_halign (row, GTK_ALIGN_END);
+
+	gtk_widget_set_name(message, "row_to");
+	gtk_widget_set_name(edit, "edit");
+	gtk_widget_set_name(delete, "edit");
+	gtk_widget_set_name(popup_menu, "popup_menu");
+	gtk_widget_set_name(nickname, "nickname");
+	gtk_widget_set_name(time, "time");
+	gtk_widget_set_name(tool_box, "popup_menu");
+	gtk_widget_set_name(message_label, "message");
+
+	mx_css_set(cssStyle2, message);
+	mx_css_set(cssStyle2, edit);
+	mx_css_set(cssStyle2, delete);
+	mx_css_set(cssStyle2, popup_menu);
+	mx_css_set(cssStyle2, nickname);
+	mx_css_set(cssStyle2, tool_box);
+	mx_css_set(cssStyle2, time);
+	mx_css_set(cssStyle2, message_label);
+
+	return row;
+}
+
 void static print_history(t_list *history_message_list);
 
 void mx_messdel(t_user_message **message) {
@@ -148,6 +352,7 @@ void *watcher_thread(void *param)
 	char *author = NULL, *body = NULL;
 	char timebuf[64];
 	mx_do_message_request((t_user_message *)param, "new_message");
+	mx_messdel((t_user_message **)&param);
 	// message_request_history(REQUEST_HISTORY);
 	// while(1)
 	// {
@@ -185,9 +390,17 @@ void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
 	char *type = user->last_server_back;
 	t_user_message *message = NULL;
 	int index_msg = 0;
-
+	GtkWidget *temp;
     if (strcmp(type, "new_message_back") == 0) {
     	mx_push_back(history_message_list, new_message);
+    	if(new_message->owner_id == owner.id){
+    		temp = mx_create_out_mess(new_message->data, new_message->nickname);
+    	}
+    	else {
+    		temp = mx_create_in_mess(new_message->data, new_message->nickname);
+    	}
+    	gtk_widget_show_all(temp);
+    	gtk_list_box_insert(messageList, temp, -1);
     }
     else if (strcmp(type, "update_message_back") == 0) {
     	index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
@@ -268,7 +481,7 @@ void *read_server_thread(void *par) {
 void do_send() {
 	const gchar *mess_data;
 
-	mess_data = gtk_entry_get_text(GTK_ENTRY(sendEntry));
+	mess_data = strdup(gtk_entry_get_text(GTK_ENTRY(sendEntry)));
 	if(!mess_data || !*mess_data)
 	{
 		gtk_widget_grab_focus(sendEntry);
@@ -281,6 +494,7 @@ void do_send() {
 	message->nickname = owner.nickname;
 	message->tv_id = 0;
 	pthread_create(&watcher, 0, watcher_thread, (void *)message);
+	gtk_entry_set_text(GTK_ENTRY(sendEntry), "");
 }
 
 static void zero_string(char *arr) {
@@ -416,46 +630,15 @@ void init_chat_window(char *nickname)
 	// printf("INDEX ::: #%d\t:::\t\" %p \"\n", indx, message);
 
 	/************* TEST END **************/
-
-
-
-
-	box1 = gtk_label_new("ляяяяяя яяяяяя каааакояяя каааакояяякаааакояяякаа");
-	gtk_label_set_line_wrap(GTK_LABEL(box1), TRUE);
-	messageBox1 = gtk_box_new (FALSE, 0);
-	messageButton1 = gtk_button_new();
-	gtk_container_add (GTK_CONTAINER (messageButton1), box1);
-	gtk_widget_set_name(messageBox1, "inputMess");
-
-	gtk_widget_set_halign (messageBox1, GTK_ALIGN_END);
-	gtk_container_add (GTK_CONTAINER (messageBox1), messageButton1);
-	gtk_list_box_insert(messageList, messageBox1, 0);
+	box1 = mx_create_out_mess("dwdw", "dwdwd");
 	GtkCssProvider *cssStyle;
-	GtkCssProvider *cssStyle2;
-	GtkCssProvider *cssStyle3;
-	    cssStyle = gtk_css_provider_new();
-	    cssStyle2 = gtk_css_provider_new();
-	    cssStyle3 = gtk_css_provider_new();
-
-	    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
-	    gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
-	    gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
-
-	    mx_css_set(cssStyle, chatWindow);
-	    mx_css_set(cssStyle, sendButton);
-	    mx_css_set(cssStyle, sendEntry);
-	    mx_css_set(cssStyle2, messageButton1);
-
-	messageBox2 = gtk_box_new (FALSE, 0);
-	messageButton2 = gtk_button_new_with_label("Шооооо");
-
-	gtk_widget_set_name(messageBox2, "outMess");
-	gtk_container_add (GTK_CONTAINER (messageBox2), messageButton2);
-	gtk_list_box_insert(messageList, messageBox2, 1);
-
-	    mx_css_set(cssStyle3, messageButton2);
-	 // mx_do_history_request(3);
-	 pthread_create(&server, 0, read_server_thread, 0);
+	cssStyle = gtk_css_provider_new();
+	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+	mx_css_set(cssStyle, chatWindow);
+	mx_css_set(cssStyle, sendButton);
+	mx_css_set(cssStyle, sendEntry);
+	// gtk_list_box_insert (messageList, box1, -1);
+	pthread_create(&server, 0, read_server_thread, 0);
 
 	
 	/**************************************************/

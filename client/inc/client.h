@@ -75,6 +75,8 @@ typedef struct s_user_info
 
 t_user_info owner;
 t_list *history_message_list;
+// GtkWidget *widget_list;
+
 
 typedef struct s_client_info {
     int sock;
