@@ -6,29 +6,30 @@ int main(int argc, const char **argv) {
     argv = NULL;
     const char *db_name = "uchat.db";
     int connected_users[USERS_LIMIT];
-    // struct tls_config *tls_cfg = NULL;
-	// struct tls *tls_ctx = NULL;
+    struct tls_config *tls_cfg = NULL;
+	struct tls *tls_ctx = NULL;
 	// struct tls *tls_cctx = NULL;
 
     //memset(connected_users, 0, USERS_LIMIT);
     for (int i = 0; i < USERS_LIMIT; i++)
         connected_users[i] = 0;
     
-    // if (tls_init() == -1)
-	// 	errx(1, "unable to initialize TLS");
-	// if ((tls_cfg = tls_config_new()) == NULL)
-	// 	errx(1, "unable to allocate TLS config");
-    // // if (tls_config_set_dheparams(tls_cfg, ))
-	// if (tls_config_set_ca_file(tls_cfg, "server.crt") == -1)
-	// 	errx(1, "unable to set root CA file server.crt");
-	// if (tls_config_set_cert_file(tls_cfg, "server.crt") == -1)
-	// 	errx(1, "unable to set TLS certificate file server.crt");
-	// if (tls_config_set_key_file(tls_cfg, "server.key") == -1)
-	// 	errx(1, "unable to set TLS key file server.key");
-	// if ((tls_ctx = tls_server()) == NULL)
-	// 	errx(1, "tls server creation failed");
-	// if (tls_configure(tls_ctx, tls_cfg) == -1)
-	// 	errx(1, "tls configuration failed (%s)", tls_error(tls_ctx));
+    if (tls_init() == -1)
+		errx(1, "unable to initialize TLS");
+	if ((tls_cfg = tls_config_new()) == NULL)
+		errx(1, "unable to allocate TLS config");
+    if (tls_config_set_dheparams(tls_cfg, "legacy") == -1)
+        errx(1,"unable to set dheparams");
+	if (tls_config_set_ca_file(tls_cfg, "server.crt") == -1)
+		errx(1, "unable to set root CA file server.crt");
+	if (tls_config_set_cert_file(tls_cfg, "server.crt") == -1)
+		errx(1, "unable to set TLS certificate file server.crt");
+	if (tls_config_set_key_file(tls_cfg, "server.key") == -1)
+		errx(1, "unable to set TLS key file server.key");
+	if ((tls_ctx = tls_server()) == NULL)
+		errx(1, "tls server creation failed");
+	if (tls_configure(tls_ctx, tls_cfg) == -1)
+		errx(1, "tls configuration failed (%s)", tls_error(tls_ctx));
 
     // mx_demon();
     int server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -39,7 +40,7 @@ int main(int argc, const char **argv) {
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(5000);
-    //inet_aton("10.111.3.11", &addr.sin_addr);
+    // inet_aton("10.111.3.11", &addr.sin_addr);
     inet_aton("127.0.0.1", &addr.sin_addr);
 
     int on = 1;

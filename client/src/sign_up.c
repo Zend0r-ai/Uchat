@@ -23,7 +23,7 @@ char *mx_proc_log_in_back(json_object *jobj, t_user_info *user) {
     int error = json_object_get_int(json_object_object_get(jobj, "error"));
 
     if (error == 0){
-        user->nickname = json_object_get_string(json_object_object_get(jobj, "nickname"));
+        user->nickname = strdup(json_object_get_string(json_object_object_get(jobj, "nickname")));
         user->id = json_object_get_int(json_object_object_get(jobj, "user_id"));
     }
     else {
@@ -48,16 +48,27 @@ char *mx_proc_sign_up_back(json_object *jobj) {
     return NULL;
 }
 
-char *mx_proc_server_back(char *buffer, t_user_info *user) {
+void *mx_proc_server_back(char *buffer, t_user_info *user) {
     json_object *jobj = json_tokener_parse(buffer);
     const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
-    
-    if (strcmp(type, "log_in_back") == 0)
-        return mx_proc_log_in_back(jobj, user);
-    else if (strcmp(type, "sign_up_back") == 0)
-        return mx_proc_sign_up_back(jobj);
-    else if (strcmp(type, "do_message") == 0)
-        mx_proc_message_back(jobj);
+    void *back = NULL;
+
+    user->last_server_back = strdup(type);
+    if (strcmp(type, "log_in_back") == 0) {
+        back = mx_proc_log_in_back(jobj, user);
+        // json_object_put(jobj);
+        return back;
+    }
+    else if (strcmp(type, "sign_up_back") == 0) {
+        back = mx_proc_sign_up_back(jobj);
+        json_object_put(jobj);
+        return back;
+    }
+    else if (strcmp(type, "new_message_back") == 0 || strcmp(type, "update_message_back") == 0 || strcmp(type, "delete_message_back") == 0) {
+        back = mx_proc_message_back(jobj);
+        json_object_put(jobj);
+        return back;
+    }
     return NULL;
 }
 

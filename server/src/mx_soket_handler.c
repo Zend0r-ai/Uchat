@@ -25,16 +25,17 @@ void mx_socket_handler(int client_sock, int *connected_users) {
 
 void mx_parse_message(json_object *jobj, int *connected_users, int fd_from) {
     const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
+    //int user_id = json_object_get_int(json_object_object_get(jobj, "user_id"));
 
     if (strcmp(type, "new_message") == 0) {
         json_object *j_time = json_object_new_int(time(NULL));
         json_object_object_add(jobj, "msg_time", j_time);
         mx_message_handler(jobj, connected_users, fd_from, "new_message_back", db_add_message);
     }
-    else if (strcmp(type, "delete_message") == 0) {
+    else if (strcmp(type, "delete_message") == 0 /*&& user_id == connected_users[fd_from]*/) {
         mx_message_handler(jobj, connected_users, fd_from, "delete_message_back", db_delete_message);
     }
-    else if (strcmp(type, "update_message") == 0) {
+    else if (strcmp(type, "update_message") == 0 /*&& user_id == connected_users[fd_from]*/) {
         mx_message_handler(jobj, connected_users, fd_from, "update_message_back", db_update_message);
     }
     else if (strcmp(type, "history_request") == 0) {
@@ -223,7 +224,7 @@ static char *json_pack_message(t_message *msg, int err_code, char *msg_type) {
     json_object *j_time = json_object_new_int(msg->msg_time);
     json_object *j_body = json_object_new_string(msg->msg_body);
 
-    printf("message body = %s\n", json_object_get_string(j_body));
+    //printf("message body = %s\n", json_object_get_string(j_body)); // DEBUG line
 
     json_object_object_add(jback, "type", j_type);
     json_object_object_add(jback, "error", j_error);
@@ -238,15 +239,16 @@ static char *json_pack_message(t_message *msg, int err_code, char *msg_type) {
 static void mx_message_handler(json_object *jobj, int *connected_users, int fd_from, char *msg_type, bool (*msg_handler)(sqlite3**, t_message)) {
     t_message *new_message = json_unpack_message(jobj);
 
-    bool message_handled = msg_handler(&db, *new_message);
+    bool message_handled = (new_message->user_id == connected_users[fd_from] ? msg_handler(&db, *new_message) : false);
 
     if (message_handled) {
         char *json_str = json_pack_message(new_message, 0, msg_type);
-        printf("json object = %s\n", json_str);
+        //printf("json object = %s\n", json_str); // DEBUG line
         write_to_socket(json_str, connected_users, fd_from, 1);
     }
     else {
         char *json_str = json_pack_message(new_message, 1, msg_type);
+        //printf("json object = %s\n", json_str); // DEBUG line
         write_to_socket(json_str, NULL, fd_from, 0);
     }
 
