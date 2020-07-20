@@ -30,7 +30,7 @@ void mx_messdel(t_user_message **message) {
     	mx_strdel(&((*message)->data));
     	free(*message);
     	*message = NULL;
-	}
+	}	
 }
 
 t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body) {
@@ -47,6 +47,9 @@ t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body) 
 }
 
 bool mx_is_message_by_data(t_list_node *node, int owner_id, int message_id, t_user_message **message) {
+	if (message)
+		*message = NULL;
+
 	if (((t_user_message *)(node->data))->tv_id == message_id
 		&& ((t_user_message *)(node->data))->owner_id == owner_id) {
 		if (message) {
@@ -66,6 +69,8 @@ int mx_get_index_history_message(t_list *list, int owner_id, int message_id, t_u
        		return i;
     return -1;
 }
+
+
 
 // int mx_get_index_history_message(t_list *list, int user_id, int message_id) {
 // 	{
@@ -93,7 +98,9 @@ t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
 	    message->tv_id = time_id;
 	    message->nickname = user_nickname;
 	}
-	printf("here\n");
+	if (message) {
+		printf("DEBUG_MESSAGE: %d, %s, %lu, %s\n", message->owner_id, message->data, message->tv_id, message->nickname);
+	}
     return message;
 }
 
@@ -102,6 +109,9 @@ void mx_do_message_request(t_user_message *message, const char *request) {
 	char *data = NULL;
 	char answ[BUF_SIZE];
 
+	if (!message) {
+		return;
+	}
 	json_object *jobj = json_object_new_object();
 	json_object *j_type = json_object_new_string(request);
 	json_object *j_mess = json_object_new_string(message->data);
@@ -124,7 +134,6 @@ void mx_do_message_request(t_user_message *message, const char *request) {
 	// mx_printstr("SERVER: ", 0);													/***************/
 	// mx_printstr(answ, 0);
 	// mx_printstr("\n", 0);
-	free(message);
 	json_object_put(jobj);
 	// system("leaks -q uchat");
 	// printf("Aaaaaaaaaaaaaaaaaaa\n");
@@ -185,9 +194,48 @@ void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
     	message->data = new_message->data;
     }
     else if (strcmp(type, "delete_message_back") == 0) {
-    	index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
-    	mx_pop_index(history_message_list, index_msg);
-    	mx_messdel(&message);
+    	//index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
+    	// if (message && index_msg != -1) {
+    	// 	mx_pop_index(history_message_list, index_msg);
+    	// 	mx_messdel(&message);
+    	// }
+
+    	for (t_list_node *w = history_message_list->head; w != NULL; w = w->next) {
+    		int u_id = ((t_user_message *)(w->data))->owner_id;
+    	    time_t u_time =((t_user_message *)(w->data))->tv_id;
+
+    		// printf("\nNODE\t:::\t\t%d, %lu\n", u_id, u_time);
+    		// printf("FROM SERVER MSG\t:::\t%d, %lu\n", new_message->owner_id, new_message->tv_id);
+    		
+    		if ( u_id == new_message->owner_id && u_time == new_message->tv_id) {
+    			t_list_node *temp = w;
+
+    			if (history_message_list->head != history_message_list->tail) {
+    				if (w == history_message_list->head) {
+						history_message_list->head = w->next;
+						w->next->prev = NULL;
+	    			} 
+	    			else if (w == history_message_list->tail) {
+	    				history_message_list->tail = w->prev;
+	    				w->prev->next = NULL;
+	    			} 
+		    		else {
+						w->prev->next = w->next;
+	    			}
+    			} 
+    			else {
+    				history_message_list->head = NULL;
+    				history_message_list->tail = NULL;
+    			}
+	   			
+    			history_message_list->size--;
+    			
+    			mx_messdel((t_user_message **)(&(temp->data)));
+				free(temp);
+    			write(0, "NODE DELETED\n", strlen("NODE DELETED\n"));
+    			break;
+    		}
+    	}
     }
 }
 
@@ -205,13 +253,14 @@ void *read_server_thread(void *par) {
 			flag = false;
 		}
 		answ[tail] = '\0';
-		message = mx_proc_server_back(answ, &owner);
-		mx_switch_message_back(&owner, message);
 		mx_printstr("SERVER THREAD: ", 0);
 		mx_printstr(answ, 0);
 		mx_printstr("\n", 0);
+		message = mx_proc_server_back(answ, &owner);
+		if (!message)
+			continue;
+		mx_switch_message_back(&owner, message);
 		print_history(history_message_list);
-
 	}
 	return par;
 }
@@ -277,9 +326,9 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 
 /* ============== TEST HISTORY ================*/
 
-void static print_node(t_list_node * node) {
+void static print_node(t_list_node *node) {
 	static int i = 0;
-	t_user_message * mess = (t_user_message *)(node->data);
+	t_user_message *mess = (t_user_message *)(node->data);
 
 	printf("\n=================================================================================================\n");
 	printf("%d)\tMESSAGE FROM \"%s\"\t#%lu\tuser id: %d\t:::\t%s\n", i, mess->nickname, mess->tv_id, mess->owner_id, mess->data);
@@ -352,6 +401,7 @@ void init_chat_window(char *nickname)
 	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"ScrolledWindow"));
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
+	
 	message_request_history();
 	print_history(history_message_list);
 
@@ -407,18 +457,54 @@ void init_chat_window(char *nickname)
 	 // mx_do_history_request(3);
 	 pthread_create(&server, 0, read_server_thread, 0);
 
-	 	/************* TEST EDIT *************/
+	
+	/**************************************************/
+
+	//  owner.last_server_back = "delete_message_back";
+	// t_user_message *m = (t_user_message *)malloc(sizeof(t_user_message));
+
+ //    m->owner_id = 1;
+ //    m->data = "test";
+ //    m->tv_id = time(NULL);
+ //    m->nickname = "Vasya";
+
+	// mx_switch_message_back(&owner, m);
+
+	 /*************************************************/
+
+
+	/************* TEST EDIT *************/
 
 	// for (int i = 0; i < 2000000000; i++);
 	// t_user_message *message = history_message_list->head->next->next->data;
 
-	// t_user_message *temp = mx_create_edit_message(message, "HELLO, WORLD!");
+	// t_user_message *temp = mx_create_edit_message(message, "SPY");
 	// printf("TEMP :%s\n", temp->data);
 	// mx_do_message_request(temp, "update_message");
 	// // print_history(history_message_list);
 	// printf("<<<<<<<<<<< %s >>>>>>>>>>>>\n", (char *)(((t_user_message *)history_message_list->head->next->next->data)->data));
 
 	/*********** TEST EDIT END ***********/
+
+	/************ TEST DELETE ************/
+
+	//for (int i = 0; i < 2000000000; i++);
+	// sleep(1);
+	// //t_user_message *message = history_message_list->head->next->next->data;
+	// //t_user_message *message = history_message_list->head->next->data;
+	// t_user_message *message = NULL;
+	// if (history_message_list->head) {
+	// 	message = history_message_list->head->data;
+	// }
+	
+
+	// // t_user_message *temp = mx_create_edit_message(message, "HELLO, WORLD!");
+	// // printf("TEMP :%s\n", temp->data);
+	// mx_do_message_request(message, "delete_message");
+	// print_history(history_message_list);
+	// printf("<<<<<<<<<<< %s >>>>>>>>>>>>\n", (char *)(((t_user_message *)history_message_list->head->next->next->data)->data));
+
+	/********** TEST DELETE END **********/
 }
 
 // void init_chat_window(char *nickname)
