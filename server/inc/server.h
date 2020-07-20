@@ -18,7 +18,13 @@
 #include <sys/event.h>
 #include <fcntl.h>
 #include <sqlite3.h>
+#include <err.h>
 #include "../../libjson/json.h"
+#include "../../libressl-3.2.0/include/tls.h"
+#include "../../libressl-3.2.0/include/openssl/evp.h"
+#include "../../libressl-3.2.0/include/openssl/aes.h"
+#include "../../libressl-3.2.0/include/openssl/sha.h"
+#include "../../libressl-3.2.0/include/openssl/conf.h"
 
 
 #define COLS_IN_USERS 4

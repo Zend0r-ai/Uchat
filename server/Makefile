@@ -22,12 +22,26 @@ OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))
 JSONA = ../libjson/libjsonc.a
 JSOND = ../libjson
 JSONI = ../libjson/inc
+
+LIBRESSL_A = ../libressl-3.2.0/tls/.libs/libtls.a \
+			 ../libressl-3.2.0/ssl/.libs/libssl.a \
+			 ../libressl-3.2.0/crypto/.libs/libcrypto.a
+
+LIBRESSL_H = \
+			-I ../libressl/include/tls.h \
+			-I ../libressl/include/openssl \
+			-I ../libressl/include/pqueue.h \
+			-I ../libressl/tls \
+			-I ../libressl/ssl \
+			-I ../libressl/crypto
+
+
 all: $(NAME)
 
 $(FILE:a/%=%)
 
 $(NAME): $(JSONA) $(OBJS)
-	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -lsqlite3 -o $@ $(JSONA)
+	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -lsqlite3 -o $@ $(JSONA) $(LIBRESSL_H) $(LIBRESSL_A)
 	@printf "\r\33[2K$@ \033[32;1mcreated\033[0m\n"
 
 $(OBJD)/%.o: $(SRCD)/%.c $(INCS)
