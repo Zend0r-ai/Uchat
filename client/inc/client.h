@@ -58,6 +58,16 @@ typedef struct s_user_message
 
 /* ============= MESSAGE STRUCTURE END ============= */
 
+/* =============== listboxrow STRUCTURE =============== */
+
+typedef struct s_row
+{
+    t_user_message *message;
+    GtkWidget *mess_row;
+} t_row;
+
+/* ============= listboxrow STRUCTURE END ============= */
+
 /* =============== USER STRUCTURE =============== */
 
 typedef struct s_user_info
@@ -75,6 +85,7 @@ typedef struct s_user_info
 
 t_user_info owner;
 t_list *history_message_list;
+t_list *row_history_list;
 // GtkWidget *widget_list;
 
 
@@ -90,6 +101,7 @@ void *mx_proc_server_back(char *buffer, t_user_info *user);
 char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
 char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);
+void mx_do_message_request(t_user_message *message, const char *request);
 
 
 
