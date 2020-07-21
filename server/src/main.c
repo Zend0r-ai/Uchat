@@ -20,10 +20,10 @@ int main(int argc, const char **argv) {
 		errx(1, "unable to allocate TLS config");
     if (tls_config_set_dheparams(tls_cfg, "legacy") == -1)
         errx(1,"unable to set dheparams");
-	if (tls_config_set_ca_file(tls_cfg, "server.crt") == -1)
-		errx(1, "unable to set root CA file server.crt");
-	if (tls_config_set_cert_file(tls_cfg, "server.crt") == -1)
-		errx(1, "unable to set TLS certificate file server.crt");
+	if (tls_config_set_ca_file(tls_cfg, "server.csr") == -1)
+		errx(1, "unable to set root CA file server.csr");
+	if (tls_config_set_cert_file(tls_cfg, "server.pem") == -1)
+		errx(1, "unable to set TLS certificate file server.csr");
 	if (tls_config_set_key_file(tls_cfg, "server.key") == -1)
 		errx(1, "unable to set TLS key file server.key");
 	if ((tls_ctx = tls_server()) == NULL)
@@ -39,7 +39,7 @@ int main(int argc, const char **argv) {
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(5000);
+    addr.sin_port = htons(1111);
     // inet_aton("10.111.3.11", &addr.sin_addr);
     inet_aton("127.0.0.1", &addr.sin_addr);
 
