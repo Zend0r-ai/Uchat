@@ -18,7 +18,8 @@ SRC		=	start.c\
 			sign_up.c\
 			login.c\
 			chat.c\
-			main.c
+			main.c\
+			mx_report_tls.c
 
 
 GLD 	= 	start.glade\
@@ -41,13 +42,24 @@ LIBMXA = 	../libmx/libmx.a
 LIBMXD = 	../libmx
 LIBMXI = 	../libmx/inc
 
+LIBRESSL_A = ../libressl-3.2.0/tls/.libs/libtls.a \
+			 ../libressl-3.2.0/ssl/.libs/libssl.a \
+			 ../libressl-3.2.0/crypto/.libs/libcrypto.a
+
+LIBRESSL_H = \
+			-I ../libressl/include/tls.h \
+			-I ../libressl/include/openssl \
+			-I ../libressl/include/pqueue.h \
+			-I ../libressl/tls \
+			-I ../libressl/ssl \
+			-I ../libressl/crypto
 
 all: install_json install_libmx install clean
 
 install:
 	@cp $(SGLD) ./
 	@glib-compile-resources ./src/client.gresource.xml --target=./src/resources.c --generate-source
-	@clang $(SRCS) $(RSS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI)
+	@clang $(SRCS) $(RSS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI) $(LIBRESSL_H) $(LIBRESSL_A)
 	@printf "\r\33[2K$(NAME) \033[32;1mcreated\033[0m\n"
 
 install_libmx:

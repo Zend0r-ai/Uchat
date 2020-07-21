@@ -18,7 +18,13 @@
 #include <gtk/gtk.h>
 #include <time.h>
 #include <gio/gio.h>
+#include <err.h>
 #include "../../libmx/inc/libmx.h"
+#include "../../libressl-3.2.0/include/tls.h"
+#include "../../libressl-3.2.0/include/openssl/evp.h"
+#include "../../libressl-3.2.0/include/openssl/aes.h"
+#include "../../libressl-3.2.0/include/openssl/sha.h"
+#include "../../libressl-3.2.0/include/openssl/conf.h"
 
 
 #define BUF_SIZE 2048
@@ -91,6 +97,8 @@ char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
 char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);
 
+//=======================TLS=====================//
+void mx_report_tls(struct tls * tls_ctx, char * host);
 
 
 #endif
