@@ -7,9 +7,9 @@ int main(int argc, const char **argv) {
     const char *db_name = "uchat.db";
     int connected_users[USERS_LIMIT];
 
-    //memset(connected_users, 0, USERS_LIMIT);
-    for (int i = 0; i < USERS_LIMIT; i++)
-        connected_users[i] = 0;
+    memset(connected_users, 0, USERS_LIMIT*sizeof(int));
+    // for (int i = 0; i < USERS_LIMIT; i++)
+    //     connected_users[i] = 0;
 
     // mx_demon();
     int server = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -35,14 +35,14 @@ int main(int argc, const char **argv) {
     }
     int kq = kqueue();
     if (kq == -1) {
-        fprintf(stderr, "error = %s\n", strerror(errno));
+        fprintf(stderr, "kqueue init error = %s\n", strerror(errno));
         close(server);
         return -1;
     }
     struct kevent new_event;
     EV_SET(&new_event, server, EVFILT_READ, EV_ADD, 0, 0, 0);
     if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
-        fprintf(stderr, "error = %s\n", strerror(errno));
+        fprintf(stderr, "kevent error = %s\n", strerror(errno));
         close(server);
         return -1;
     }
@@ -66,7 +66,7 @@ int main(int argc, const char **argv) {
             int client_sock = accept(server, NULL, NULL);
 
             if (client_sock == -1) {
-                fprintf(stderr, "error = %s\n", strerror(errno));
+                fprintf(stderr, "accept error = %s\n", strerror(errno));
                 break;
             }
             printf("New client, fd=%d\n", client_sock); // DEBUG line
@@ -80,7 +80,7 @@ int main(int argc, const char **argv) {
 
             EV_SET(&new_event, client_sock, EVFILT_READ, EV_ADD, 0, 0, 0);
             if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
-                fprintf(stderr, "error = %s\n", strerror(errno));
+                fprintf(stderr, "kevent error = %s\n", strerror(errno));
                 break;
             }
         } 
