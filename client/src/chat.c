@@ -541,7 +541,7 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 		if (strcmp(type, "hst_list") == 0) {
 			message = mx_proc_message_back(jobj);
 			mx_push_back(history_message_list, message);
-			// mx_add_message_widget(message);
+			mx_add_message_widget(message);
 		}
 		printf("JSON MESSAGE ::: \t%s\t%s\n", type, (mx_proc_message_back(jobj))->data);
 		json_object_put(jobj);
