@@ -20,8 +20,8 @@ int main(int argc, const char **argv) {
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(5003);
-    // inet_aton("10.111.3.11", &addr.sin_addr);
-    inet_aton("127.0.0.1", &addr.sin_addr);
+    inet_aton("10.111.3.11", &addr.sin_addr);
+    // inet_aton("127.0.0.1", &addr.sin_addr);
 
     int on = 1;
     setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));

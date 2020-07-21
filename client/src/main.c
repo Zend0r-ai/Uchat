@@ -17,8 +17,8 @@ static int init_connection(int argc,char *argv[], int sock) {
     }
     addr.sin_family = AF_INET;
     addr.sin_port = htons(5003);
-    // inet_aton("10.111.3.11", &addr.sin_addr);
-    inet_aton("127.0.0.1", &addr.sin_addr);
+    inet_aton("10.111.3.11", &addr.sin_addr);
+    // inet_aton("127.0.0.1", &addr.sin_addr);
     if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) != 0) {
         printf("CONNECT ERROR: %s\n", strerror(errno));
         close(sock);
