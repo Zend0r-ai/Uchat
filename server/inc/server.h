@@ -29,7 +29,7 @@
 
 #define COLS_IN_USERS 4
 #define COLS_IN_MESSAGES 4
-#define HISTORY_DEPTH 50
+#define HISTORY_DEPTH 100
 #define USERS_LIMIT 256
 #define BUFFER_SIZE 2048
 
@@ -38,9 +38,10 @@ sqlite3 *db; // FUCK global variable !!!!!!!!
 struct sockaddr_in addr;
 
 //=================TLS struct=================//
-    struct tls_config *tls_cfg;
-	struct tls *tls_ctx;
-	struct tls *tls_cctx;
+struct tls_config *tls_cfg;
+struct tls *tls_ctx;
+//struct tls *tls_cctx;
+struct tls *tls_cctx[USERS_LIMIT];
 
 typedef struct s_user {
 	const char *user_login;
@@ -58,7 +59,7 @@ typedef struct s_message {
 typedef bool (*msg_handler)(sqlite3**, t_message);
 
 void mx_demon();
-void mx_socket_handler(int client_sock, int *connected_users);
+void mx_socket_handler(/*struct tls *tls_cctx, */int client_sock, int *connected_users);
 
 void db_open(sqlite3 **db, const char *db_name);
 void db_add_table(sqlite3 **db, const char *sql_stmt);
@@ -72,8 +73,9 @@ bool db_add_message(sqlite3 **db, t_message new_message);
 bool db_delete_message(sqlite3 **db, t_message del_message);
 bool db_update_message(sqlite3 **db, t_message change_message);
 void db_print_users(sqlite3 **db);
-t_message *db_get_history(sqlite3 **db, int depth, int *fact_depth);
+t_message *db_get_history(sqlite3 **db, int depth, int *fact_depth/*, int user_id*/);
 void clear_history(t_message **history, int fact_depth);
 int db_check_login_nickname(sqlite3 **db, t_user user);
+//int db_get_user_last_message_time(sqlite3 **db, int user_id);
 
 #endif

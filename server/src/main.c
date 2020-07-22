@@ -1,18 +1,16 @@
 #include "server.h"
 
+
+
 int main(int argc, const char **argv) {
-    //sqlite3 *db;
     argc = 0;
     argv = NULL;
     const char *db_name = "uchat.db";
     int connected_users[USERS_LIMIT];
     tls_cfg = NULL;
 	tls_ctx = NULL;
-	tls_cctx = NULL;
-
-    //memset(connected_users, 0, USERS_LIMIT);
-    for (int i = 0; i < USERS_LIMIT; i++)
-        connected_users[i] = 0;
+    
+    memset(connected_users, 0, USERS_LIMIT*sizeof(int));
     
     if (tls_init() == -1)
 		errx(1, "unable to initialize TLS");
@@ -55,14 +53,14 @@ int main(int argc, const char **argv) {
     }
     int kq = kqueue();
     if (kq == -1) {
-        fprintf(stderr, "error = %s\n", strerror(errno));
+        fprintf(stderr, "kqueue init error = %s\n", strerror(errno));
         close(server);
         return -1;
     }
     struct kevent new_event;
     EV_SET(&new_event, server, EVFILT_READ, EV_ADD, 0, 0, 0);
     if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
-        fprintf(stderr, "error = %s\n", strerror(errno));
+        fprintf(stderr, "kevent error = %s\n", strerror(errno));
         close(server);
         return -1;
     }
@@ -70,8 +68,7 @@ int main(int argc, const char **argv) {
     struct timespec timeout;
     timeout.tv_sec = 1;
     timeout.tv_nsec = 0;
-    
-    // database init
+
     db_open(&db, db_name);
     db_init(&db);
 
@@ -82,44 +79,37 @@ int main(int argc, const char **argv) {
             fprintf(stderr, "error = %s\n", strerror(errno));
             break;
         }
+        
         if (new_event.ident == (unsigned long)server) {
             int client_sock = accept(server, NULL, NULL);
 
             if (client_sock == -1) {
-                fprintf(stderr, "error = %s\n", strerror(errno));
+                fprintf(stderr, "accept error = %s\n", strerror(errno));
                 break;
             }
-            if (tls_accept_socket(tls_ctx, &tls_cctx, client_sock) == -1)
+            //if (tls_accept_socket(tls_ctx, &tls_cctx, client_sock) == -1)
+            if (tls_accept_socket(tls_ctx, &tls_cctx[client_sock], client_sock) == -1)
 				errx(1, "tls accept failed (%s)", tls_error(tls_ctx));
             int i = 0;
-            if((i = tls_handshake(tls_cctx)) == -1)
-                errx(1, "tls handshake failed (%s)", tls_error(tls_cctx));
-            // if (tls_handshake(tls_ctx) == -1)
-            //     printf("error %d", tls_handshake(tls_ctx));
+            //if((i = tls_handshake(tls_cctx)) == -1)
+            if((i = tls_handshake(tls_cctx[client_sock])) == -1)
+                errx(1, "tls handshake failed (%s)", tls_error(tls_cctx[client_sock]));
             printf("New client, fd=%d\n", client_sock); // DEBUG line
-            // printf("users_id connected:"); // DEBUG line
-            // for (int i = 3; i < USERS_LIMIT; i++) { // DEBUG line
-            //     if (connected_users[i] != 0) { // DEBUG line
-            //         printf(" fd[%d]= id[%d]", i, connected_users[i]); // DEBUG line
-            //     } // DEBUG line
-            // } 
-            // printf("\n"); // DEBUG line
 
+            //printf("tls_socket = %p\n", (void*)tls_cctx);
 
             EV_SET(&new_event, client_sock, EVFILT_READ, EV_ADD, 0, 0, 0);
             if (kevent(kq, &new_event, 1, 0, 0, NULL) == -1) {
-                fprintf(stderr, "error = %s\n", strerror(errno));
+                fprintf(stderr, "kevent error = %s\n", strerror(errno));
                 break;
             }
         } 
         else {
-            mx_socket_handler(new_event.ident, connected_users);
+            mx_socket_handler(/*tls_cctx, */new_event.ident, connected_users);
             if ((new_event.flags & EV_EOF) != 0) {
                 printf("Client disconnected, fd=%lu\n", new_event.ident); // DEBUG line
                 connected_users[new_event.ident] = 0;
-                //printf("connected_users[%lu], value=%d\n", new_event.ident, connected_users[new_event.ident]);
                 close(new_event.ident);
-                
             }
         }
     }
@@ -127,6 +117,7 @@ int main(int argc, const char **argv) {
     close(kq);
     close(server);
 
+    // don't forget to close tls here
     system("leaks uchat_server");
     return 0;
 }

@@ -28,7 +28,7 @@
                 <property name="margin_right">5</property>
                 <property name="margin_top">10</property>
                 <property name="hexpand">True</property>
-                <property name="max_length">512</property>
+                <property name="max_length">2048</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
