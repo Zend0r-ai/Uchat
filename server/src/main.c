@@ -6,9 +6,9 @@ int main(int argc, const char **argv) {
     argv = NULL;
     const char *db_name = "uchat.db";
     int connected_users[USERS_LIMIT];
-    struct tls_config *tls_cfg = NULL;
-	struct tls *tls_ctx = NULL;
-	struct tls *tls_cctx = NULL;
+    tls_cfg = NULL;
+	tls_ctx = NULL;
+	tls_cctx = NULL;
 
     //memset(connected_users, 0, USERS_LIMIT);
     for (int i = 0; i < USERS_LIMIT; i++)
@@ -18,7 +18,7 @@ int main(int argc, const char **argv) {
 		errx(1, "unable to initialize TLS");
 	if ((tls_cfg = tls_config_new()) == NULL)
 		errx(1, "unable to allocate TLS config");
-    if (tls_config_set_dheparams(tls_cfg, "legacy") == -1)
+    if (tls_config_set_dheparams(tls_cfg, "auto") == -1)
         errx(1,"unable to set dheparams");
 	if (tls_config_set_ca_file(tls_cfg, "./rcirtificate/root.pem") == -1)
 		errx(1, "unable to set root CA file root.pem");
@@ -91,8 +91,11 @@ int main(int argc, const char **argv) {
             }
             if (tls_accept_socket(tls_ctx, &tls_cctx, client_sock) == -1)
 				errx(1, "tls accept failed (%s)", tls_error(tls_ctx));
-            if (tls_handshake(tls_ctx) == -1)
-                // printf("error %d", tls_handshake(tls_ctx));
+            int i = 0;
+            if((i = tls_handshake(tls_cctx)) == -1)
+                errx(1, "tls handshake failed (%s)", tls_error(tls_cctx));
+            // if (tls_handshake(tls_ctx) == -1)
+            //     printf("error %d", tls_handshake(tls_ctx));
             printf("New client, fd=%d\n", client_sock); // DEBUG line
             // printf("users_id connected:"); // DEBUG line
             // for (int i = 3; i < USERS_LIMIT; i++) { // DEBUG line

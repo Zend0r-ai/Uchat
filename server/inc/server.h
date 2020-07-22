@@ -37,6 +37,11 @@ sqlite3 *db; // FUCK global variable !!!!!!!!
 
 struct sockaddr_in addr;
 
+//=================TLS struct=================//
+    struct tls_config *tls_cfg;
+	struct tls *tls_ctx;
+	struct tls *tls_cctx;
+
 typedef struct s_user {
 	const char *user_login;
 	const char *user_password;

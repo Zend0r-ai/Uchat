@@ -1,4 +1,4 @@
-#include "../inc/client.h"
+#include "client.h"
 
 t_client_info *get_client_info(void) {
     static t_client_info socket;
@@ -53,8 +53,9 @@ static int init_connection(int argc,char *argv[], int sock) {
 		errx(1, "tls connection failed (%s)",
 		    tls_error(tls_ctx));
     }
-    // if (tls_handshake(tls_ctx) == -1)
-    //     printf("error %d", tls_handshake(tls_ctx));
+    int i = 0;
+    if ((i = tls_handshake(tls_ctx)) == -1)
+			errx(1, "tls handshake failed (%s)", tls_error(tls_ctx));
     mx_report_tls(tls_ctx, "uchat");
     return 0;
 }

@@ -10,15 +10,15 @@ static t_message *json_unpack_message(json_object *jobj);
 static char *json_pack_message(t_message *msg, int err_code, char *msg_type);
 static void mx_message_handler(json_object *jobj, int *connected_users, int fd_from, char *msg_type, bool (*msg_handler)(sqlite3**, t_message));
 
-void mx_socket_handler(int client_sock, int *connected_users) {
+void mx_socket_handler(int client_soket, int *connected_users) {
     char buffer[BUFFER_SIZE];
     json_object *jobj = NULL;
 
-    ssize_t res = read(client_sock, buffer, BUFFER_SIZE);
+    ssize_t res = read(client_soket, buffer, BUFFER_SIZE);
 
     if (res > 0) {
         jobj = json_tokener_parse(buffer);
-        mx_parse_message(jobj, connected_users, client_sock);
+        mx_parse_message(jobj, connected_users, client_soket);
     }
     json_object_put(jobj);
 }
