@@ -93,10 +93,12 @@ char *message_do_sing_up(t_user_info *reg_par) {
         data = (char *)json_object_to_json_string(jobj);
         write(0, data, strlen(data));                                               /***************/
         write(0, "\n", strlen("\n"));                                               /***************/
-        if (write(clnt->sock, data, strlen(data)) == -1) {
+        // if (write(clnt->sock, data, strlen(data)) == -1) {
+        if (tls_write(tls_ctx, data, strlen(data)) == -1) {    
             printf("error = %s\n", strerror(errno));
         }
-        read(clnt->sock, answ, 1024);
+        // read(clnt->sock, answ, 1024);
+        tls_read(tls_ctx, answ, 1024);
         return mx_proc_server_back(answ, reg_par);
     }
     return SU_ERROR_CONFIRM_PASS;

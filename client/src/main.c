@@ -9,8 +9,8 @@ t_client_info *get_client_info(void) {
 static int init_connection(int argc,char *argv[], int sock) {
     t_client_info *inf_sock = get_client_info();
     struct sockaddr_in addr;
-    struct tls_config *tls_cfg = NULL;
-	struct tls *tls_ctx = NULL;
+    tls_cfg = NULL;
+    tls_ctx = NULL;
     u_short port = atoi(argv[2]);
 
     inf_sock->sock = sock;
@@ -56,7 +56,7 @@ static int init_connection(int argc,char *argv[], int sock) {
     int i = 0;
     if ((i = tls_handshake(tls_ctx)) == -1)
 			errx(1, "tls handshake failed (%s)", tls_error(tls_ctx));
-    // mx_report_tls(tls_ctx, "uchat");
+    mx_report_tls(tls_ctx, "uchat");
     return 0;
 }
 

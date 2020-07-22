@@ -360,7 +360,8 @@ void mx_do_message_request(t_user_message *message, const char *request) {
 	json_object_object_add(jobj, "user_nickname", j_nick);
 	data = (char *)json_object_to_json_string(jobj);
 	printf("CLIENT->SERVER: %s", data);                                            	/***************/
-	if (write(clnt->sock, data, strlen(data)) == -1) {
+	//if (write(clnt->sock, data, strlen(data)) == -1) {
+	if (tls_write(tls_ctx, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
 	// read(clnt->sock, answ, BUF_SIZE);
@@ -515,7 +516,8 @@ void *read_server_thread(void *par) {
 	t_user_message *message;
 
 	while (flag) {
-		if ((tail = read(clnt->sock, answ, BUF_SIZE)) == -1) {
+		//if ((tail = read(clnt->sock, answ, BUF_SIZE)) == -1) {
+		if ((tail = tls_read(tls_ctx, answ, BUF_SIZE)) == -1) {
 			printf("error = %s\n", strerror(errno));
 			flag = false;
 		}
@@ -568,7 +570,8 @@ int mx_history_size(json_object *jobj) {
 }
 
 void mx_do_history_ready(int fd) {						//*
-	write(fd, "r", 1);									//	*	READY
+	//write(fd, "r", 1);
+	tls_write(tls_ctx, "r", 1);									//	*	READY
 }														//*
 
 t_list *mx_create_hst_message_list(int list_size, int fd) {
@@ -579,7 +582,8 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 
 	for (int i = 0; i < list_size; ++i, message = NULL) {
 		mx_do_history_ready(fd);
-		read(fd, buffer, BUF_SIZE);
+		//read(fd, buffer, BUF_SIZE);
+		tls_read(tls_ctx, buffer, BUF_SIZE);
 		jobj = json_tokener_parse(buffer);
 
 		type = json_object_get_string(json_object_object_get(jobj, "type"));
@@ -624,7 +628,8 @@ void mx_do_history_request(int fd) {
 	json_object_object_add(jobj, "type", j_type);
 
 	data = json_object_to_json_string(jobj);
-	write(fd, data, strlen(data));
+	//write(fd, data, strlen(data));
+	tls_write(tls_ctx, data, strlen(data));
 	// mx_strdel((char **)&data);
 }
 
@@ -639,7 +644,8 @@ void message_request_history(void) {
 	// printf("**\n");
 	zero_string(answ); /////////// не обнулять а через рид
 	// printf("***\n");
-	read(clnt->sock, answ, BUF_SIZE);
+	//read(clnt->sock, answ, BUF_SIZE);
+	tls_read(tls_ctx, answ, BUF_SIZE);
 	if (strcmp("no_history", answ) == 0)
 		return;
 	// printf("****\n");

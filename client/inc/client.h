@@ -88,6 +88,8 @@ typedef struct s_user_info
 } t_user_info;
 
 /* ============= USER STRUCTURE END ============= */
+struct tls_config *tls_cfg;
+struct tls *tls_ctx;
 
 t_user_info owner;
 t_list *history_message_list;
