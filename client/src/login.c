@@ -111,7 +111,7 @@ static void open_start_win(GtkWidget *widget, gpointer data)
     (void) data;
     init_start_window();
     gtk_widget_hide(loginWindow);
-    gtk_widget_show_all(StartWindow);
+    gtk_widget_destroy(loginWindow);
 }
 
 void init_login_window()

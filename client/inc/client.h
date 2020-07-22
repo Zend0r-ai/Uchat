@@ -92,8 +92,8 @@ char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
 char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);
 void mx_do_message_request(t_user_message *message, const char *request);
-void mx_delete_message_row(t_user_message *message);
-
-
+void mx_delete_message_row(t_user_message *message, int index);
+t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
+void do_send();
 
 #endif

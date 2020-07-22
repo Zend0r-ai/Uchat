@@ -53,6 +53,9 @@ void *mx_proc_server_back(char *buffer, t_user_info *user) {
     const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
     void *back = NULL;
 
+    // if (user->last_server_back) {
+    //     mx_strdel(&(user->last_server_back));
+    // }
     user->last_server_back = strdup(type);
     if (strcmp(type, "log_in_back") == 0) {
         back = mx_proc_log_in_back(jobj, user);

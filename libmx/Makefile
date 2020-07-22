@@ -42,7 +42,7 @@ OBJ = $(FILES:%=$(OBJ_DIR)%.o)
 WFLAGS = -Wall -Wextra -Werror -Wpedantic
 LFLAGS = -Iinc
 CFLAGS = -Ofast -march=native -fomit-frame-pointer -flto
-DFLAGS = -O0 -g3 -glldb -ftrapv -fno-omit-frame-pointer -fsanitize=address
+DFLAGS =  -g3 -glldb -ftrapv -fno-omit-frame-pointer -fsanitize=address,undefined
 
 COMPILE = $(CC) -std=c11 -pipe $(WFLAGS) $(LFLAGS)
 PRINT = printf
