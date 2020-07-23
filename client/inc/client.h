@@ -46,6 +46,8 @@ extern GtkWidget *signUpWindow;
 void init_start_window();
 extern GtkWidget *StartWindow;
 
+typedef struct s_row t_row;
+
 /* =============== MESSAGE STRUCTURE =============== */
 
 typedef struct s_user_message
@@ -60,6 +62,23 @@ typedef struct s_user_message
 /* ============= MESSAGE STRUCTURE END ============= */
 
 /* =============== USER STRUCTURE =============== */
+
+typedef struct s_row
+{
+    GtkWidget *popup_menu;
+    GtkWidget *row;
+    GtkWidget *in_row;
+    GtkWidget *nickname;
+    GtkWidget *time;
+    GtkWidget *message_label;
+    GtkWidget *message;
+    GtkWidget *void_box;
+    GtkWidget *container;
+    GtkWidget *tool_box;
+    GtkWidget *edit;
+    GtkWidget *delete;
+    GtkWidget *ebox;
+}t_row;
 
 typedef struct s_user_info
 {
@@ -83,6 +102,12 @@ typedef struct s_client_info {
     int sock;
 } t_client_info;
 
+typedef struct s_edit_data {
+    t_user_message *message;
+    t_user_message *new_message;
+    int index;
+} t_edit_data;
+
 t_client_info *get_client_info(void);
 
 void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
@@ -95,5 +120,6 @@ void mx_do_message_request(t_user_message *message, const char *request);
 void mx_delete_message_row(t_user_message *message, int index);
 t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
 void do_send();
+void *read_server_thread(void *par);
 
 #endif
