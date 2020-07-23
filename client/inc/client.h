@@ -52,6 +52,8 @@ extern GtkWidget *signUpWindow;
 void init_start_window();
 extern GtkWidget *StartWindow;
 
+typedef struct s_row t_row;
+
 /* =============== MESSAGE STRUCTURE =============== */
 
 typedef struct s_user_message
@@ -60,21 +62,29 @@ typedef struct s_user_message
     char *data;
     time_t tv_id;
     const char *nickname;
+    GtkWidget *row;
 } t_user_message;
 
 /* ============= MESSAGE STRUCTURE END ============= */
 
-/* =============== listboxrow STRUCTURE =============== */
+/* =============== USER STRUCTURE =============== */
 
 typedef struct s_row
 {
-    t_user_message *message;
-    GtkWidget *mess_row;
-} t_row;
-
-/* ============= listboxrow STRUCTURE END ============= */
-
-/* =============== USER STRUCTURE =============== */
+    GtkWidget *popup_menu;
+    GtkWidget *row;
+    GtkWidget *in_row;
+    GtkWidget *nickname;
+    GtkWidget *time;
+    GtkWidget *message_label;
+    GtkWidget *message;
+    GtkWidget *void_box;
+    GtkWidget *container;
+    GtkWidget *tool_box;
+    GtkWidget *edit;
+    GtkWidget *delete;
+    GtkWidget *ebox;
+}t_row;
 
 typedef struct s_user_info
 {
@@ -88,18 +98,23 @@ typedef struct s_user_info
 } t_user_info;
 
 /* ============= USER STRUCTURE END ============= */
-struct tls_config *tls_cfg;
-struct tls *tls_ctx;
 
 t_user_info owner;
 t_list *history_message_list;
-t_list *row_history_list;
+struct tls_config *tls_cfg;
+struct tls *tls_ctx;
 // GtkWidget *widget_list;
 
 
 typedef struct s_client_info {
     int sock;
 } t_client_info;
+
+typedef struct s_edit_data {
+    t_user_message *message;
+    t_user_message *new_message;
+    int index;
+} t_edit_data;
 
 t_client_info *get_client_info(void);
 
@@ -110,9 +125,12 @@ char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
 char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);
 void mx_do_message_request(t_user_message *message, const char *request);
+void mx_delete_message_row(t_user_message *message, int index);
+t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
+void do_send();
+void *read_server_thread(void *par);
 
-//=======================TLS=====================//
+/* =============== TLS =============== */
 void mx_report_tls(struct tls * tls_ctx, char * host);
-
 
 #endif

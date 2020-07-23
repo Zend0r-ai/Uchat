@@ -24,11 +24,9 @@ char *message_do_login(t_user_info *log_par) {
 	data = (char *)json_object_to_json_string(jobj);
 	write(0, data, strlen(data));												/***************/
 	write(0, "\n", strlen("\n"));												/***************/
-	//if (write(clnt->sock, data, strlen(data)) == -1) {
 	if (tls_write(tls_ctx, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
-	//read(clnt->sock, answ, 1024);
 	tls_read(tls_ctx, answ, 1024);
 	printf("SERVER ::: %s\n", answ);
 	json_object_put(jobj);
@@ -113,7 +111,7 @@ static void open_start_win(GtkWidget *widget, gpointer data)
     (void) data;
     init_start_window();
     gtk_widget_hide(loginWindow);
-    gtk_widget_show_all(StartWindow);
+    gtk_widget_destroy(loginWindow);
 }
 
 void init_login_window()

@@ -53,6 +53,9 @@ void *mx_proc_server_back(char *buffer, t_user_info *user) {
     const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
     void *back = NULL;
 
+    // if (user->last_server_back) {
+    //     mx_strdel(&(user->last_server_back));
+    // }
     user->last_server_back = strdup(type);
     if (strcmp(type, "log_in_back") == 0) {
         back = mx_proc_log_in_back(jobj, user);
@@ -93,12 +96,10 @@ char *message_do_sing_up(t_user_info *reg_par) {
         data = (char *)json_object_to_json_string(jobj);
         write(0, data, strlen(data));                                               /***************/
         write(0, "\n", strlen("\n"));                                               /***************/
-        // if (write(clnt->sock, data, strlen(data)) == -1) {
-        if (tls_write(tls_ctx, data, strlen(data)) == -1) {    
+        if (tls_write(tls_ctx, data, strlen(data)) == -1) {
             printf("error = %s\n", strerror(errno));
         }
-        // read(clnt->sock, answ, 1024);
-        tls_read(tls_ctx, answ, 1024);
+        read(clnt->sock, answ, 1024);
         return mx_proc_server_back(answ, reg_par);
     }
     return SU_ERROR_CONFIRM_PASS;
