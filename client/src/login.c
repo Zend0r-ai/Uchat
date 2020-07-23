@@ -10,7 +10,6 @@ pthread_t loginner;
 int logged_in;
 
 char *message_do_login(t_user_info *log_par) {
-	t_client_info *clnt = get_client_info();
 	char *data = NULL;
 	char answ[1024];
 	json_object *jobj = json_object_new_object();

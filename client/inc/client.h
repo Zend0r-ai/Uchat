@@ -40,6 +40,10 @@
 #define SU_ERROR_CONECTION "Server conection problem.."
 #define SU_ERROR_CONFIRM_PASS "Wrong password confirm"
 
+// ============ Reconnecting defines ============== //
+#define CNCT_AM 5       // AMOUNT TRY
+#define CNCT_CLDN 5     // COOL DOWN
+
 void init_chat_window();
 extern GtkWidget *chatWindow;
 
@@ -107,7 +111,8 @@ struct tls *tls_ctx;
 
 
 typedef struct s_client_info {
-    int sock;
+    char **argv;
+    int socket;
 } t_client_info;
 
 typedef struct s_edit_data {
@@ -129,8 +134,12 @@ void mx_delete_message_row(t_user_message *message, int index);
 t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
 void do_send();
 void *read_server_thread(void *par);
+void message_request_history(void);
 
 /* =============== TLS =============== */
 void mx_report_tls(struct tls * tls_ctx, char * host);
+
+/* =========== RECONNECTION ========== */
+int init_connection(int argc,char *argv[], int sock);
 
 #endif

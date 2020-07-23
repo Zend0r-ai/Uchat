@@ -78,7 +78,6 @@ void *mx_proc_server_back(char *buffer, t_user_info *user) {
 /*====================== GLOBAL END =====================*/
 
 char *message_do_sing_up(t_user_info *reg_par) {
-    t_client_info *clnt = get_client_info();
     char *data = NULL;
     char answ[1024];
 
@@ -99,7 +98,7 @@ char *message_do_sing_up(t_user_info *reg_par) {
         if (tls_write(tls_ctx, data, strlen(data)) == -1) {
             printf("error = %s\n", strerror(errno));
         }
-        read(clnt->sock, answ, 1024);
+        tls_read(tls_ctx, answ, 1024);
         return mx_proc_server_back(answ, reg_par);
     }
     return SU_ERROR_CONFIRM_PASS;

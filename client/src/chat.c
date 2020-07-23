@@ -552,7 +552,6 @@ t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
 }
 
 void mx_do_message_request(t_user_message *message, const char *request) {
-	t_client_info *clnt = get_client_info();
 	char *data = NULL;
 	char answ[BUF_SIZE];
 
@@ -775,21 +774,42 @@ void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
     }
 }
 
+int mx_do_reconnection(int rc) {
+	char buffer[BUF_SIZE];
+	t_client_info *info = get_client_info();
+	int counter = 0;
+
+	while(rc <= 0) {
+		sleep(CNCT_CLDN);
+		printf("TRY CONNECTING\n");
+		close(info->socket);
+		info->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		rc = init_connection(0, info->argv, info->socket);
+		if (counter++ == CNCT_AM)
+			return -1;
+	}
+	return 0;
+}
+
 void *read_server_thread(void *par) {
-	t_client_info *clnt = get_client_info();
 	char answ[BUF_SIZE];
 	int tail = 0;
 	t_user_message *message = NULL;
 
 	while (true) {
-		if ((tail = tls_read(tls_ctx, answ, BUF_SIZE)) == -1) {
-			printf("error = %s\n", strerror(errno));
-			break;
+		if ((tail = tls_read(tls_ctx, answ, BUF_SIZE)) <= 0) {
+			tail = mx_do_reconnection(tail);
+			if (tail < 0)
+				exit(0);
+			// mx_clear_screen();
+			message_request_history();
+			continue;
 		}
 		answ[tail] = '\0';
-		mx_printstr("SERVER THREAD: ", 0);
-		mx_printstr(answ, 0);
-		mx_printstr("\n", 0);
+		printf("TAIL %d\n", tail);
+		// mx_printstr("SERVER THREAD: ", 0);
+		// mx_printstr(answ, 0);
+		// mx_printstr("\n", 0);
 		message = mx_proc_server_back(answ, &owner);
 		if (!message)
 			continue;
@@ -835,11 +855,11 @@ int mx_history_size(json_object *jobj) {
 	return 0;
 }
 
-void mx_do_history_ready(int fd) {						//*
+void mx_do_history_ready() {						//*
 	tls_write(tls_ctx, "r", 1);									//	*	READY
 }														//*
 
-t_list *mx_create_hst_message_list(int list_size, int fd) {
+t_list *mx_create_hst_message_list(int list_size) {
 	char buffer[BUF_SIZE];
 	json_object *jobj;
 	const char *type = NULL;
@@ -847,7 +867,7 @@ t_list *mx_create_hst_message_list(int list_size, int fd) {
 	short last = -1;
 
 	for (int i = 0; i < list_size; ++i, message = NULL) {
-		mx_do_history_ready(fd);
+		mx_do_history_ready();
 		last = tls_read(tls_ctx, buffer, BUF_SIZE);
 		if (last > 0) {
 			buffer[last] = '\0';
@@ -892,7 +912,7 @@ void static print_history(t_list *list) {
 
 /* ============== TEST HISTORY END ==============*/
 
-void mx_do_history_request(int fd) {
+void mx_do_history_request() {
 	const char *data;
 	json_object *jobj = json_object_new_object();
 	json_object *j_type = json_object_new_string("history_request");
@@ -904,13 +924,13 @@ void mx_do_history_request(int fd) {
 }
 
 void message_request_history(void) {
-	t_client_info *clnt = get_client_info();
 	char *data = NULL;
 	char answ[BUF_SIZE];
 	json_object *jobj;
+	t_client_info *clnt = get_client_info();
 
 	// printf("*\n");
-	mx_do_history_request(clnt->sock);
+	mx_do_history_request();
 	// printf("**\n");
 	zero_string(answ); /////////// не обнулять а через рид
 	// printf("***\n");
@@ -922,7 +942,7 @@ void message_request_history(void) {
 	// printf("*****\n");
 	int hst_size = mx_history_size(jobj);
 	// printf("******\n");
-	mx_create_hst_message_list(hst_size, clnt->sock);
+	mx_create_hst_message_list(hst_size);
 	// printf("*******\n");
 	json_object_put(jobj);
 }

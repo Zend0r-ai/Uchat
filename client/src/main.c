@@ -1,19 +1,17 @@
 #include "../inc/client.h"
 
 t_client_info *get_client_info(void) {
-    static t_client_info socket;
+    static t_client_info argv;
 
-    return &socket;
+    return &argv;
 }
 
-static int init_connection(int argc,char *argv[], int sock) {
-    t_client_info *inf_sock = get_client_info();
+int init_connection(int argc,char *argv[], int sock) {
     struct sockaddr_in addr;
     tls_cfg = NULL;
     tls_ctx = NULL;
     u_short port = atoi(argv[2]);
 
-    inf_sock->sock = sock;
     if (sock == -1) {
         printf("ERROR: %s\n", strerror(errno));
         return -1;
@@ -63,8 +61,11 @@ static int init_connection(int argc,char *argv[], int sock) {
 int main(int argc,char *argv[]){
 	// argc = 0;
  //    argv = NULL;
+    t_client_info *info = get_client_info();
+    info->argv = argv;
     owner.last_server_back = NULL;
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    info->socket = sock;
     if (init_connection(argc, argv, sock) < 0)
         return -1;
     gtk_init(&argc, &argv);
