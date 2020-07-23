@@ -1,6 +1,7 @@
 NAME	=	uchat_server
 
 CFLG	=	-std=c11 $(addprefix -W, all extra error pedantic) -g
+DFLAGS = -O0 -g3 -glldb -ftrapv -fno-omit-frame-pointer -fsanitize=address
 
 SRCD	=	src
 INCD	=	inc
@@ -11,9 +12,29 @@ INC		=	server.h
 INCS	=	$(addprefix $(INCD)/, $(INC))
 
 SRC		=	main.c \
-			mx_demon.c \
+			mx_daemonizer.c \
 			mx_soket_handler.c \
-			db_api.c
+			mx_message_handler.c \
+			mx_parse_message.c \
+			mx_sign_in.c \
+			mx_sign_up.c \
+			mx_write_to_socket.c \
+			mx_kqueue_runner.c \
+			mx_get_message_history.c \
+			mx_json_pack_message.c \
+			mx_json_unpack_message.c \
+			mx_db_open.c \
+			mx_db_init.c \
+			mx_db_verify_user.c \
+			mx_db_get_user_nickname.c \
+			mx_db_add_user.c \
+			mx_db_check_login_nickname.c \
+			mx_db_add_message.c \
+			mx_db_delete_message.c \
+			mx_db_update_message.c \
+			mx_db_get_history.c \
+			mx_clear_history.c \
+			mx_db_api.c
 
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
@@ -41,7 +62,7 @@ all: $(NAME)
 $(FILE:a/%=%)
 
 $(NAME): $(JSONA) $(OBJS)
-	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -lsqlite3 -o $@ $(JSONA) $(LIBRESSL_H) $(LIBRESSL_A)
+	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -lsqlite3 -o $@ $(JSONA) $(LIBRESSL_H) $(LIBRESSL_A) $(DFLAGS)
 	@printf "\r\33[2K$@ \033[32;1mcreated\033[0m\n"
 
 $(OBJD)/%.o: $(SRCD)/%.c $(INCS)

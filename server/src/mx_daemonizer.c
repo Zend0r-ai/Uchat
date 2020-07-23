@@ -1,6 +1,6 @@
 #include "server.h"
 
-void mx_demon() {
+void mx_daemonizer() {
     if (fork() != 0 ) {
         exit(0);
     }
