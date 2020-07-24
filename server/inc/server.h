@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/errno.h>
 #include <pthread.h>
 #include <netdb.h>

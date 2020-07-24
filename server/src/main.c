@@ -7,11 +7,22 @@ static void mx_listen(int server);
 static int init_server_socket(int port);
 static void mx_destroyer(int server);
 
+int server = 0;
+
+void sig_end(int a) {
+    a = 0;
+
+    tls_close(tls_ctx);
+    close(server);
+    printf("\nBye!\n");
+    exit(0);
+}
+
 int main(int argc, const char **argv) {
     tls_cfg = NULL;
 	tls_ctx = NULL;
-    int server = 0;
-
+    // int server = 0;
+    signal(SIGINT, sig_end);
     if (argc != 2) {
         fprintf(stderr, "usage: ./uchat_server port\n");
         return -1;
@@ -37,11 +48,11 @@ static void tls_set_config(struct tls_config **tls_cfg, struct tls **tls_ctx) {
         errx(1, "unable to allocate TLS config");
     if (tls_config_set_dheparams(*tls_cfg, "auto") == -1)
         errx(1,"unable to set dheparams");
-    if (tls_config_set_ca_file(*tls_cfg, "../rcirtificate/root.pem") == -1)
+    if (tls_config_set_ca_file(*tls_cfg, "./rcirtificate/root.pem") == -1)
         errx(1, "unable to set root CA file root.pem");
-    if (tls_config_set_cert_file(*tls_cfg, "../server.pem") == -1)
+    if (tls_config_set_cert_file(*tls_cfg, "./server.pem") == -1)
         errx(1, "unable to set TLS certificate file server.pem");
-    if (tls_config_set_key_file(*tls_cfg, "../server.key") == -1)
+    if (tls_config_set_key_file(*tls_cfg, "./server.key") == -1)
         errx(1, "unable to set TLS key file server.key");
     if ((*tls_ctx = tls_server()) == NULL)
         errx(1, "tls server creation failed");
@@ -79,8 +90,9 @@ static int init_server_socket(int port) {
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    inet_aton("10.111.3.11", &addr.sin_addr);
+    // inet_aton("10.111.3.11", &addr.sin_addr);
     // inet_aton("127.0.0.1", &addr.sin_addr);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
     return server;
 }
 
