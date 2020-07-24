@@ -111,7 +111,7 @@ static void open_start_win(GtkWidget *widget, gpointer data)
     (void) data;
     init_start_window();
     gtk_widget_hide(loginWindow);
-    gtk_widget_destroy(loginWindow);
+    gtk_widget_show_all(StartWindow);
 }
 
 void init_login_window()
@@ -133,14 +133,14 @@ void init_login_window()
 	g_signal_connect(G_OBJECT(loginButton),"clicked", G_CALLBACK(do_login),NULL);
 	
 	GtkCssProvider *cssStyle;
-    cssStyle = gtk_css_provider_new();
+	cssStyle = gtk_css_provider_new();
+	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+			                               GTK_STYLE_PROVIDER(cssStyle),
+			                               GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
-
-    mx_css_set(cssStyle, loginWindow);
-    mx_css_set(cssStyle, loginEntry);
-    mx_css_set(cssStyle, passwordEntry);
-    mx_css_set(cssStyle, loginButton);
+	gtk_widget_set_name(loginWindow, "main_window");
+	gtk_widget_set_name(loginButton, "send_button");
 
 	logged_in = 0;
 	g_timeout_add(50, check_login, 0);
