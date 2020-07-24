@@ -80,6 +80,7 @@ void *mx_proc_server_back(char *buffer, t_user_info *user) {
 char *message_do_sing_up(t_user_info *reg_par) {
     char *data = NULL;
     char answ[1024];
+    int rc = -1;
 
     if (strcmp(reg_par->password, reg_par->confpass) == 0) {
         json_object *jobj = json_object_new_object();
@@ -93,10 +94,10 @@ char *message_do_sing_up(t_user_info *reg_par) {
         json_object_object_add(jobj, "password", j_passwd);
         json_object_object_add(jobj, "nickname", j_nick);
         data = (char *)json_object_to_json_string(jobj);
-        write(0, data, strlen(data));                                               /***************/
-        write(0, "\n", strlen("\n"));                                               /***************/
-        if (tls_write(tls_ctx, data, strlen(data)) == -1) {
-            printf("error = %s\n", strerror(errno));
+        if (tls_write(tls_ctx, data, strlen(data)) <= 0) {
+            rc = mx_do_reconnection(-1);
+            if (rc < 0)
+                exit(0); // должен выйти на главный экран
         }
         tls_read(tls_ctx, answ, 1024);
         return mx_proc_server_back(answ, reg_par);

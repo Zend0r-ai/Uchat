@@ -21,7 +21,7 @@ int init_connection(int argc,char *argv[], int sock) {
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = inet_addr(argv[1]);
     // inet_aton("10.111.3.11", &addr.sin_addr);
-    // inet_aton("127.0.0.1", &addr.sin_addr);
+    inet_aton("127.0.0.1", &addr.sin_addr);
     if (tls_init() == -1)
         errx(1, "unable to initialize TLS");
     if ((tls_cfg = tls_config_new()) == NULL)

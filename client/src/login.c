@@ -11,7 +11,8 @@ int logged_in;
 
 char *message_do_login(t_user_info *log_par) {
 	char *data = NULL;
-	char answ[1024];
+	char answ[BUF_SIZE];
+    int rc = -1;
 	json_object *jobj = json_object_new_object();
 	json_object *j_type = json_object_new_string("log_in");
 	json_object *j_login = json_object_new_string(log_par->login);
@@ -23,10 +24,21 @@ char *message_do_login(t_user_info *log_par) {
 	data = (char *)json_object_to_json_string(jobj);
 	write(0, data, strlen(data));												/***************/
 	write(0, "\n", strlen("\n"));												/***************/
-	if (tls_write(tls_ctx, data, strlen(data)) == -1) {
-		printf("error = %s\n", strerror(errno));
+	while ((tls_write(tls_ctx, data, strlen(data))) <= 0) {
+		rc = mx_do_reconnection(-1);
+        if (rc < 0) {
+            return LG_ERROR_CONNECTION; 
+        }
+
 	}
-	tls_read(tls_ctx, answ, 1024);
+	printf("%s\n", strerror(errno));
+	printf("SUDA rc = %d\n", rc);
+	if (tls_read(tls_ctx, answ, BUF_SIZE) <= 0) {
+		rc = mx_do_reconnection(-1);
+        if (rc < 0) {
+            return LG_ERROR_CONNECTION; 
+        }
+	}
 	printf("SERVER ::: %s\n", answ);
 	json_object_put(jobj);
 	return mx_proc_server_back(answ, log_par);

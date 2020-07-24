@@ -31,13 +31,13 @@
 
 /* ======= Sing In defines ======== */
 #define LG_ERROR_DATA "Wrong login or password"
-#define LG_ERROR_CONECTION "Server conection problem.."
+#define LG_ERROR_CONNECTION "Bad Internet connection"
 #define LG_ERROR_ONLINE "User already online"
 
 // ======= Sing Up defines ========
 #define SU_ERROR_DATA_LOGIN "Login already exist"
 #define SU_ERROR_DATA_NICKN "Nickname already exist"
-#define SU_ERROR_CONECTION "Server conection problem.."
+#define SU_ERROR_CONNECTION "Bad Internet connection"
 #define SU_ERROR_CONFIRM_PASS "Wrong password confirm"
 
 // ============ Reconnecting defines ============== //
@@ -141,5 +141,6 @@ void mx_report_tls(struct tls * tls_ctx, char * host);
 
 /* =========== RECONNECTION ========== */
 int init_connection(int argc,char *argv[], int sock);
+int mx_do_reconnection(int rc);
 
 #endif

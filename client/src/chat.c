@@ -25,7 +25,7 @@ gulong hendler_id_button;
 // }
 
 
-int show_popup(GtkWidget *widget, GdkEvent *event) {
+int mx_show_popup(GtkWidget *widget, GdkEvent *event) {
 
 	const gint RIGHT_CLICK = 3;
 
@@ -166,7 +166,7 @@ GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text){
 	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
 
 	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
-	G_CALLBACK(show_popup), popup_menu);
+	G_CALLBACK(mx_show_popup), popup_menu);
 
 	gtk_container_add (GTK_CONTAINER(row), container);
 	gtk_widget_set_halign (row, GTK_ALIGN_START);
@@ -436,7 +436,7 @@ GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text){
 	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
 
 	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
-	G_CALLBACK(show_popup), popup_menu);
+	G_CALLBACK(mx_show_popup), popup_menu);
 
 	gtk_container_add (GTK_CONTAINER(row), container);
 	gtk_widget_set_halign (row, GTK_ALIGN_END);
@@ -781,10 +781,16 @@ int mx_do_reconnection(int rc) {
 
 	while(rc <= 0) {
 		sleep(CNCT_CLDN);
-		printf("TRY CONNECTING\n");
+		printf("TRY CONNECTING\n"); // выод на панели
 		close(info->socket);
+		if (tls_ctx){
+			tls_close(tls_ctx);
+			tls_free(tls_ctx);
+			tls_ctx = NULL;
+		}
 		info->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		rc = init_connection(0, info->argv, info->socket);
+		if (init_connection(0, info->argv, info->socket) == 0)
+			return 0;
 		if (counter++ == CNCT_AM)
 			return -1;
 	}
@@ -806,10 +812,7 @@ void *read_server_thread(void *par) {
 			continue;
 		}
 		answ[tail] = '\0';
-		printf("TAIL %d\n", tail);
-		// mx_printstr("SERVER THREAD: ", 0);
-		// mx_printstr(answ, 0);
-		// mx_printstr("\n", 0);
+		printf("SERVER THREAD: %s\n", answ);
 		message = mx_proc_server_back(answ, &owner);
 		if (!message)
 			continue;
