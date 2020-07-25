@@ -3,10 +3,9 @@
 #define REQUEST_HISTORY 10
 
 GtkWidget *chatWindow;
-GtkWidget *sendEntry, *sendButton, *messageButton1, *messageButton2;
-GtkWidget *messageBox1, *messageBox2;
+GtkWidget *sendEntry, *sendButton;
 GtkWidget *statusLabel;
-GtkWidget *messagesTreeView;
+GtkWidget *Viewport;
 GtkAdjustment *vAdjust;
 GtkScrolledWindow *scrolledWindow;
 GtkListStore *messagesListStore;
@@ -109,115 +108,22 @@ GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text){
 	GtkWidget *message;
 	GtkWidget *void_box;
 	GtkWidget *container;
-	GtkWidget *tool_box;
-	// GtkWidget *edit;
 	GtkWidget *delete;
 	GtkWidget *ebox;
-	tool_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
-	// edit = gtk_button_new();
-	delete = gtk_button_new();
-	// gtk_container_add (GTK_CONTAINER(tool_box), edit);
-	gtk_container_add (GTK_CONTAINER(tool_box), delete);
 
 	popup_menu = gtk_menu_new();
 
-	// GtkCssProvider *cssStyle2;
-	// GtkCssProvider *cssStyle3;
-	// cssStyle2 = gtk_css_provider_new();
-	// cssStyle3 = gtk_css_provider_new();
-
-	// gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
-	// gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
-
 	row = gtk_list_box_row_new ();
 
+    gtk_widget_show(row);
 	gtk_list_box_row_set_activatable(GTK_LIST_BOX_ROW(row), FALSE); // !
 	gtk_list_box_row_set_selectable(GTK_LIST_BOX_ROW(row), FALSE); // !
-
-	in_row = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
-	nickname = gtk_label_new(login_text);
-	gtk_widget_set_halign (nickname, GTK_ALIGN_START);
-	message_label = gtk_label_new(message_text);
-	gtk_label_set_line_wrap(GTK_LABEL(message_label), TRUE);
-	message = gtk_button_new();
-	gtk_container_add (GTK_CONTAINER(message), message_label);
-	time = gtk_label_new("10:20");
-	void_box = gtk_box_new(FALSE, 0);
-	gtk_container_add (GTK_CONTAINER(void_box), time);
-	gtk_box_set_baseline_position(GTK_BOX(void_box), GTK_BASELINE_POSITION_CENTER);
-
-	ebox = gtk_event_box_new();
-
-	gtk_container_add (GTK_CONTAINER(ebox), message);
-	gtk_container_add (GTK_CONTAINER(in_row), ebox);
-	gtk_container_add (GTK_CONTAINER(in_row), nickname);
-
-	container = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
-
-	gtk_container_add (GTK_CONTAINER(container), in_row);
-	gtk_container_add (GTK_CONTAINER(container), void_box);
-
-	//   edit = gtk_menu_item_new_with_label("Edit");
-	// gtk_widget_show(edit);
-	// gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), edit);
-
-	delete = gtk_menu_item_new_with_label("Delete");
-	gtk_widget_show(delete);
-	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
-
-	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
-	G_CALLBACK(mx_show_popup), popup_menu);
-
-	gtk_container_add (GTK_CONTAINER(row), container);
-	gtk_widget_set_halign (row, GTK_ALIGN_START);
-
-	gtk_widget_set_name(message, "row_to");
-	// gtk_widget_set_name(edit, "edit");
-	gtk_widget_set_name(delete, "edit");
-	gtk_widget_set_name(popup_menu, "popup_menu");
-	gtk_widget_set_name(nickname, "nickname");
-	gtk_widget_set_name(time, "time");
-	gtk_widget_set_name(tool_box, "popup_menu");
-	gtk_widget_set_name(message_label, "message");
-
-	// mx_css_set(cssStyle3, message);
-	// // mx_css_set(cssStyle2, edit);
-	// mx_css_set(cssStyle3, delete);
-	// mx_css_set(cssStyle3, popup_menu);
-	// mx_css_set(cssStyle3, nickname);
-	// mx_css_set(cssStyle3, tool_box);
-	// mx_css_set(cssStyle3, time);
-	// mx_css_set(cssStyle3, message_label);
-
-	return row;
-}
-
-void mx_create_new_container_for_row(const char *message_text, const char *login_text, GtkWidget **row) {
-	GtkWidget *popup_menu;
-	GtkWidget *in_row;
-	GtkWidget *nickname;
-	GtkWidget *time;
-	GtkWidget *message_label;
-	GtkWidget *message;
-	GtkWidget *void_box;
-	GtkWidget *container;
-	GtkWidget *edit;
-	GtkWidget *delete;
-	GtkWidget *ebox;
-
-	GtkCssProvider *cssStyle2;
-	GtkCssProvider *cssStyle3;
-	cssStyle2 = gtk_css_provider_new();
-	cssStyle3 = gtk_css_provider_new();
-
-	gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
-	gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
 
 	in_row = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
     gtk_widget_show(in_row);
 	nickname = gtk_label_new(login_text);
     gtk_widget_show(nickname);
-	gtk_widget_set_halign (nickname, GTK_ALIGN_END);
+	gtk_widget_set_halign (nickname, GTK_ALIGN_START);
 	message_label = gtk_label_new(message_text);
     gtk_widget_show(message_label);
 	gtk_label_set_line_wrap(GTK_LABEL(message_label), TRUE);
@@ -241,130 +147,33 @@ void mx_create_new_container_for_row(const char *message_text, const char *login
 	container = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
     gtk_widget_show(container);
 
-	gtk_container_add (GTK_CONTAINER(container), void_box);
 	gtk_container_add (GTK_CONTAINER(container), in_row);
+	gtk_container_add (GTK_CONTAINER(container), void_box);
 
+	delete = gtk_menu_item_new_with_label("Delete");
+	gtk_menu_item_activate(GTK_MENU_ITEM(delete));
+	gtk_widget_show(delete);
+	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
 
-	gtk_container_add(GTK_CONTAINER(*row), container);
-	gtk_widget_set_halign (*row, GTK_ALIGN_END);
+	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
+	G_CALLBACK(mx_show_popup), popup_menu);
 
+	gtk_container_add (GTK_CONTAINER(row), container);
+	gtk_widget_set_halign (row, GTK_ALIGN_START);
+
+	gtk_widget_set_name(message, "input_message");
+	gtk_widget_set_name(delete, "edit_tool");
+	gtk_widget_set_name(popup_menu, "popup_menu");
+	gtk_widget_set_name(nickname, "nickname");
+	gtk_widget_set_name(time, "time");
 	gtk_widget_set_name(message_label, "message");
 
+	g_signal_connect(G_OBJECT(delete),"activate", G_CALLBACK(mx_delete_mess), row);
 
-	mx_css_set(cssStyle2, message_label);
+	return row;
 }
 
-// GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text){
-// 	GtkWidget *popup_menu;
-// 	GtkWidget *row;
-// 	GtkWidget *in_row;
-// 	GtkWidget *nickname;
-// 	GtkWidget *time;
-// 	GtkWidget *message_label;
-// 	GtkWidget *message;
-// 	GtkWidget *void_box;
-// 	GtkWidget *container;
-// 	GtkWidget *tool_box;
-// 	GtkWidget *edit;
-// 	GtkWidget *delete;
-// 	GtkWidget *ebox;
-
-// 	tool_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
-// 	edit = gtk_button_new();
-// 	delete = gtk_button_new();
-// 	gtk_container_add (GTK_CONTAINER(tool_box), edit);
-// 	gtk_container_add (GTK_CONTAINER(tool_box), delete);
-
-// 	popup_menu = gtk_menu_new();
-
-// 	GtkCssProvider *cssStyle2;
-// 	GtkCssProvider *cssStyle3;
-// 	cssStyle2 = gtk_css_provider_new();
-// 	cssStyle3 = gtk_css_provider_new();
-
-// 	gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
-// 	gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
-
-// 	row = gtk_list_box_row_new ();
-
-//     gtk_widget_show(row);
-// 	gtk_list_box_row_set_activatable(GTK_LIST_BOX_ROW(row), FALSE); // !
-// 	gtk_list_box_row_set_selectable(GTK_LIST_BOX_ROW(row), FALSE); // !
-
-// 	in_row = gtk_box_new (GTK_ORIENTATION_VERTICAL, TRUE);
-//     gtk_widget_show(in_row);
-// 	nickname = gtk_label_new(login_text);
-//     gtk_widget_show(nickname);
-// 	gtk_widget_set_halign (nickname, GTK_ALIGN_END);
-// 	message_label = gtk_label_new(message_text);
-//     gtk_widget_show(message_label);
-// 	gtk_label_set_line_wrap(GTK_LABEL(message_label), TRUE);
-// 	message = gtk_button_new();
-//     gtk_widget_show(message);
-// 	gtk_container_add (GTK_CONTAINER(message), message_label);
-// 	time = gtk_label_new("10:20");
-//     gtk_widget_show(time);
-// 	void_box = gtk_box_new(FALSE, 0);
-//     gtk_widget_show(void_box);
-// 	gtk_container_add (GTK_CONTAINER(void_box), time);
-// 	gtk_box_set_baseline_position(GTK_BOX(void_box), GTK_BASELINE_POSITION_CENTER);
-
-// 	ebox = gtk_event_box_new();
-//     gtk_widget_show(ebox);
-
-// 	gtk_container_add (GTK_CONTAINER(ebox), message);
-// 	gtk_container_add (GTK_CONTAINER(in_row), ebox);
-// 	gtk_container_add (GTK_CONTAINER(in_row), nickname);
-
-// 	container = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, TRUE);
-//     gtk_widget_show(container);
-
-// 	gtk_container_add (GTK_CONTAINER(container), void_box);
-// 	gtk_container_add (GTK_CONTAINER(container), in_row);
-
-// 	edit = gtk_menu_item_new_with_label("Edit");
-// 	gtk_menu_item_activate(GTK_MENU_ITEM(edit));
-// 	gtk_widget_show(edit);
-// 	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), edit);
-
-// 	delete = gtk_menu_item_new_with_label("Delete");
-// 	gtk_menu_item_activate(GTK_MENU_ITEM(delete));
-// 	gtk_widget_show(delete);
-// 	gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), delete);
-
-// 	g_signal_connect_swapped(G_OBJECT(ebox), "button-press-event",
-// 	G_CALLBACK(show_popup), popup_menu);
-
-// 	gtk_container_add (GTK_CONTAINER(row), container);
-// 	gtk_widget_set_halign (row, GTK_ALIGN_END);
-
-// 	gtk_widget_set_name(message, "row_to");
-// 	gtk_widget_set_name(edit, "edit");
-// 	gtk_widget_set_name(delete, "edit");
-// 	gtk_widget_set_name(popup_menu, "popup_menu");
-// 	gtk_widget_set_name(nickname, "nickname");
-// 	gtk_widget_set_name(time, "time");
-// 	gtk_widget_set_name(tool_box, "popup_menu");
-// 	gtk_widget_set_name(message_label, "message");
-
-// 	mx_css_set(cssStyle2, message);
-// 	mx_css_set(cssStyle2, edit);
-// 	mx_css_set(cssStyle2, delete);
-// 	mx_css_set(cssStyle2, popup_menu);
-// 	mx_css_set(cssStyle2, nickname);
-// 	mx_css_set(cssStyle2, tool_box);
-// 	mx_css_set(cssStyle2, time);
-// 	mx_css_set(cssStyle2, message_label);
-
-// 	g_signal_connect(G_OBJECT(delete),"activate", G_CALLBACK(mx_delete_mess), row);
-// 	g_signal_connect(G_OBJECT(edit),"activate", G_CALLBACK(mx_edit_mess), row);
-
-// 	return row;
-// }
 GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text){
-
-	// t_row temp = (t_row *)malloc(sizeof(t_row));
-
 	GtkWidget *popup_menu;
 	GtkWidget *row;
 	GtkWidget *in_row;
@@ -379,14 +188,6 @@ GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text){
 	GtkWidget *ebox;
 
 	popup_menu = gtk_menu_new();
-
-	GtkCssProvider *cssStyle2;
-	GtkCssProvider *cssStyle3;
-	cssStyle2 = gtk_css_provider_new();
-	cssStyle3 = gtk_css_provider_new();
-
-	gtk_css_provider_load_from_path(cssStyle2, "./client/src/input_mess_style.css", NULL);
-	gtk_css_provider_load_from_path(cssStyle3, "./client/src/other_mess_style.css", NULL);
 
 	row = gtk_list_box_row_new ();
 
@@ -441,21 +242,14 @@ GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text){
 	gtk_container_add (GTK_CONTAINER(row), container);
 	gtk_widget_set_halign (row, GTK_ALIGN_END);
 
-	gtk_widget_set_name(message, "row_to");
-	gtk_widget_set_name(edit, "edit");
-	gtk_widget_set_name(delete, "edit");
+	gtk_widget_set_name(message, "output_message");
+	gtk_widget_set_name(row, "row");
+	gtk_widget_set_name(edit, "edit_tool");
+	gtk_widget_set_name(delete, "edit_tool");
 	gtk_widget_set_name(popup_menu, "popup_menu");
 	gtk_widget_set_name(nickname, "nickname");
 	gtk_widget_set_name(time, "time");
 	gtk_widget_set_name(message_label, "message");
-
-	mx_css_set(cssStyle2, message);
-	mx_css_set(cssStyle2, edit);
-	mx_css_set(cssStyle2, delete);
-	mx_css_set(cssStyle2, popup_menu);
-	mx_css_set(cssStyle2, nickname);
-	mx_css_set(cssStyle2, time);
-	mx_css_set(cssStyle2, message_label);
 
 	g_signal_connect(G_OBJECT(delete),"activate", G_CALLBACK(mx_delete_mess), row);
 	g_signal_connect(G_OBJECT(edit),"activate", G_CALLBACK(mx_edit_mess), row);
@@ -643,6 +437,7 @@ gboolean mx_add_message_widget(t_user_message *new_message) {
     new_message->row = temp;
     gtk_widget_show(temp);
     gtk_list_box_insert(messageList, temp, -1);
+    gtk_adjustment_set_value(vAdjust, gtk_adjustment_get_upper(vAdjust));
     return FALSE;
 }
 
@@ -968,6 +763,7 @@ void init_chat_window(char *nickname)
 	hendler_id_entry = g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(do_send),NULL);
 	hendler_id_button = g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(do_send),NULL);
 	//    statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"statusLabel"));
+	Viewport = GTK_WIDGET(gtk_builder_get_object(builder,"Viewport"));
 	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"ScrolledWindow"));
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
@@ -990,10 +786,14 @@ void init_chat_window(char *nickname)
 	GtkCssProvider *cssStyle;
 	cssStyle = gtk_css_provider_new();
 	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
-	mx_css_set(cssStyle, chatWindow);
-	mx_css_set(cssStyle, sendButton);
-	mx_css_set(cssStyle, sendEntry);
-	// gtk_list_box_insert (messageList, box1, -1);
+	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+			                               GTK_STYLE_PROVIDER(cssStyle),
+			                               GTK_STYLE_PROVIDER_PRIORITY_USER);
+
+	gtk_widget_set_name(Viewport, "viewport");
+	gtk_widget_set_name(chatWindow, "main_window");
+	gtk_widget_set_name(sendButton, "send_button");
+	gtk_widget_set_name(sendEntry, "send_entry");
 	pthread_create(&server, 0, read_server_thread, NULL);
 
 	

@@ -229,15 +229,14 @@ void init_sign_up_window()
     
     GtkCssProvider *cssStyle;
     cssStyle = gtk_css_provider_new();
-
     gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                                           GTK_STYLE_PROVIDER(cssStyle),
+                                           GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-    mx_css_set(cssStyle, signUpWindow);
-    mx_css_set(cssStyle, loginEntry);
-    mx_css_set(cssStyle, passwordEntry);
-    mx_css_set(cssStyle, nicknameEntry);
-    mx_css_set(cssStyle, passwordConfirm);
-    mx_css_set(cssStyle, regButton);
+    gtk_widget_set_name(signUpWindow, "main_window");
+    gtk_widget_set_name(regButton, "send_button");
+    
     regged_in = 0;
     // g_timeout_add(50, check_login, 0);
 }

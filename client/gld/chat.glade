@@ -2,6 +2,11 @@
 <!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="upper">-1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="ChatWindow">
     <property name="can_focus">False</property>
     <property name="default_width">800</property>
@@ -69,9 +74,10 @@
             <property name="can_focus">True</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="vadjustment">adjustment1</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkViewport">
+              <object class="GtkViewport" id="Viewport">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
