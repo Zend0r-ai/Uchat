@@ -44,6 +44,7 @@
 #define CNCT_AM 5       // AMOUNT TRY
 #define CNCT_CLDN 5     // COOL DOWN
 
+
 void init_chat_window();
 extern GtkWidget *chatWindow;
 
@@ -112,6 +113,8 @@ t_user_info owner;
 t_list *history_message_list;
 struct tls_config *tls_cfg;
 struct tls *tls_ctx;
+t_start *start_data;
+bool is_editing;
 // GtkWidget *widget_list;
 
 
@@ -140,12 +143,13 @@ t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
 void do_send();
 void *read_server_thread(void *par);
 void message_request_history(void);
+char *message_do_login(t_user_info *log_par);
 
 /* =============== TLS =============== */
 void mx_report_tls(struct tls * tls_ctx, char * host);
 
 /* =========== RECONNECTION ========== */
-int init_connection(int argc,char *argv[], int sock);
+int init_connection(int argc,char *argv[], int sock, t_start *start_data);
 int mx_do_reconnection(int rc);
 
 #endif

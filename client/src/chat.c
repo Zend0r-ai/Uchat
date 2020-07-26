@@ -60,6 +60,8 @@ void *mx_find_row_from_list__row(void *widget) {
 // }
 
 void mx_delete_mess(GtkWidget *widget, gpointer data){
+	if (is_editing)
+		return;
 	t_user_message *current_message = mx_find_row_from_list__row(data);
 
 	if (current_message) {
@@ -75,11 +77,13 @@ void mx_edit_message_complite(GtkWidget *widget, gpointer data){
 	// g_signal_handler_disconnect_by_func(widget, G_CALLBACK(mx_edit_message_complite), data);
 	if (temp) {
 		mx_do_message_request(temp, "update_message");
+		is_editing = false;
 	}
 	// g_signal_handler_disconnect_by_func(G_OBJECT(sendButton), mx_edit_message_complite, NULL);
 }
 
 void mx_edit_mess(GtkWidget *widget, gpointer data){
+	is_editing = true;
 	printf("ХЕР\n");
 	printf("*DATA*\t%p\n", data);
 	t_user_message *current_message = mx_find_row_from_list__row(data);
@@ -463,8 +467,10 @@ gboolean mx_edit_message(t_edit_data *edit){
     	mx_delete_message_row(edit->message, edit->index);
 		// gtk_widget_destroy(edit->message->row);
 		// gtk_container_add(GTK_CONTAINER(edit->new_message->row), NULL);
-		edit->message->row = mx_create_out_mess(edit->new_message->data, edit->new_message->nickname);
-
+		if (edit->message->owner_id == owner.id)
+			edit->message->row = mx_create_out_mess(edit->new_message->data, edit->new_message->nickname);
+		else
+			edit->message->row = mx_create_in_mess(edit->new_message->data, edit->new_message->nickname);
 		printf("%d\n", edit->index);
 		gtk_widget_show(edit->message->row);
 		gtk_list_box_insert(messageList, edit->message->row, edit->index);
@@ -584,12 +590,25 @@ int mx_do_reconnection(int rc) {
 			tls_ctx = NULL;
 		}
 		info->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (init_connection(0, info->argv, info->socket) == 0)
+		if (init_connection(0, info->argv, info->socket, start_data) == 0)
 			return 0;
 		if (counter++ == CNCT_AM)
 			return -1;
 	}
 	return 0;
+}
+
+void mx_clear_node(t_list_node *node) {
+	if (node) {
+		mx_messdel((t_user_message **)(&node->data));
+	}
+	node->data = NULL;
+}
+
+void mx_clear_history(void) {
+	mx_foreach_list(history_message_list, mx_clear_node);
+	while (!history_message_list->head && !history_message_list->tail)
+		mx_pop_back(history_message_list);
 }
 
 void *read_server_thread(void *par) {
@@ -603,6 +622,8 @@ void *read_server_thread(void *par) {
 			if (tail < 0)
 				exit(0);
 			// mx_clear_screen();
+			for (int i = 0; i < CNCT_AM && message_do_login(&owner); i++);
+			mx_clear_history();
 			message_request_history();
 			continue;
 		}
@@ -756,6 +777,7 @@ void init_chat_window(char *nickname)
 	strcat(buf, nickname);
 	gtk_window_set_title(GTK_WINDOW(chatWindow), buf);
 	g_signal_connect(chatWindow,"destroy", G_CALLBACK(gtk_main_quit),NULL);
+	is_editing = false;
 
 	gtk_window_set_position(GTK_WINDOW(chatWindow), GTK_WIN_POS_CENTER);
 	sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"SendEntry"));

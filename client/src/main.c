@@ -69,8 +69,7 @@ t_start *mx_check_input(int argc, char *argv[]){
     return start;
 }
 
-int init_connection(int argc,char *argv[], int sock) {
-    t_start *start_data = mx_check_input(argc, argv);
+int init_connection(int argc,char *argv[], int sock, t_start *start_data) {
     struct sockaddr_in addr;
     tls_cfg = NULL;
     tls_ctx = NULL;
@@ -84,7 +83,7 @@ int init_connection(int argc,char *argv[], int sock) {
     addr.sin_port = htons(start_data->port);
     addr.sin_addr.s_addr = inet_addr(start_data->ip);
     // inet_aton("10.111.3.11", &addr.sin_addr);
-    inet_aton("127.0.0.1", &addr.sin_addr);
+    inet_aton(start_data->ip, &addr.sin_addr);
     if (tls_init() == -1)
         errx(1, "unable to initialize TLS");
     if ((tls_cfg = tls_config_new()) == NULL)
@@ -128,8 +127,10 @@ int main(int argc,char *argv[]){
     info->argv = argv;
     owner.last_server_back = NULL;
     int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
     info->socket = sock;
-    if (init_connection(argc, argv, sock) < 0)
+    start_data = mx_check_input(argc, argv);
+    if (init_connection(argc, argv, sock, start_data) < 0)
         return -1;
     gtk_init(&argc, &argv);
     init_start_window();
