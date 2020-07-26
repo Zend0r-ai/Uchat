@@ -151,7 +151,7 @@ void *sing_up_thread(void *param)
         return param;
     }
     free(param);
-    gtk_widget_set_sensitive(regButton, 1);
+    // gtk_widget_set_sensitive(regButton, 1);
     return param;
 }
 
@@ -191,10 +191,10 @@ void do_reg(GtkWidget *widget, gpointer data)
     ri->password = (char *)password;
     ri->confpass = (char *)confpass;
     ri->nickname = (char *)nickname;
-    init_login_window();
-    gtk_widget_set_sensitive(regButton, 1);
-    gtk_widget_hide(signUpWindow);
-    gtk_widget_show_all(loginWindow);
+    // init_login_window();
+    // gtk_widget_set_sensitive(regButton, 1);
+    // gtk_widget_hide(signUpWindow);
+    // gtk_widget_show_all(loginWindow);
     pthread_create(&reginer, 0, sing_up_thread, (void *)ri);
 }
 
@@ -205,6 +205,20 @@ static void open_start_win(GtkWidget *widget, gpointer data)
     init_start_window();
     gtk_widget_hide(signUpWindow);
     gtk_widget_show_all(StartWindow);
+}
+
+gboolean check_reg(void *param)
+{
+    (void) param;
+    if(regged_in)
+    {
+        init_login_window();
+        gtk_widget_hide(signUpWindow);
+        gtk_widget_show_all(loginWindow);
+        regged_in = 0;
+        return G_SOURCE_REMOVE;
+    }
+    return G_SOURCE_CONTINUE;
 }
 
 void init_sign_up_window()
@@ -238,5 +252,6 @@ void init_sign_up_window()
     gtk_widget_set_name(regButton, "send_button");
     
     regged_in = 0;
+    g_timeout_add(50, check_reg, 0);
     // g_timeout_add(50, check_login, 0);
 }
