@@ -73,6 +73,11 @@ typedef struct s_user_message
 
 /* =============== USER STRUCTURE =============== */
 
+typedef struct s_start {
+    int port;
+    char *ip;
+} t_start;
+
 typedef struct s_row
 {
     GtkWidget *popup_menu;
