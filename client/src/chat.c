@@ -15,9 +15,6 @@ gulong hendler_id_entry;
 gulong hendler_id_button;
 
 int mx_show_popup(GtkWidget *widget, GdkEvent *event) {
-
-	const gint RIGHT_CLICK = 3;
-
 	if (event->type == GDK_BUTTON_PRESS) {
 
 		GdkEvent *bevent = (GdkEvent *) event;
@@ -40,6 +37,7 @@ void *mx_find_row_from_list__row(void *widget) {
 }
 
 void mx_delete_mess(GtkWidget *widget, gpointer data){
+	widget = NULL;
 	if (is_editing)
 		return;
 	t_user_message *current_message = mx_find_row_from_list__row(data);
@@ -61,8 +59,9 @@ void mx_edit_message_complite(GtkWidget *widget, gpointer data){
 
 void mx_edit_mess(GtkWidget *widget, gpointer data){
 	is_editing = true;
-
 	t_user_message *current_message = mx_find_row_from_list__row(data);
+
+	widget = NULL;
 	gtk_entry_set_text(GTK_ENTRY(sendEntry), current_message->data);
 	g_signal_handler_disconnect(sendEntry, hendler_id_entry);
 	g_signal_handler_disconnect(sendButton, hendler_id_button);
@@ -233,7 +232,7 @@ GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text, 
 
 	return row;
 }
-void static print_history(t_list *history_message_list);
+// void static print_history(t_list *history_message_list);
 
 void mx_messdel(t_user_message **message) {
 	if (message && *message) {
@@ -262,7 +261,7 @@ bool mx_is_message_by_data(t_list_node *node, int owner_id, int message_id, t_us
 		*message = NULL;
 
 	if (((t_user_message *)(node->data))->tv_id == message_id
-		&& ((t_user_message *)(node->data))->owner_id == owner_id) {
+		&& ((t_user_message *)(node->data))->owner_id == (unsigned int)owner_id) {
 		if (message) {
 			*message = (node->data);
 		}
@@ -306,7 +305,6 @@ t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
 
 void mx_do_message_request(t_user_message *message, const char *request) {
 	char *data = NULL;
-	char answ[BUF_SIZE];
 
 	if (!message) {
 		return;
@@ -332,11 +330,6 @@ void mx_do_message_request(t_user_message *message, const char *request) {
 
 void *watcher_thread(void *param)
 {
-	// (void) param;
-	struct timeval tv;
-	struct tm *nowtm;
-	char *author = NULL, *body = NULL;
-	char timebuf[64];
 	mx_do_message_request((t_user_message *)param, "new_message");
 	return param;
 }
@@ -359,7 +352,7 @@ gboolean mx_add_message_widget(t_user_message *new_message) {
     return FALSE;
 }
 
-void mx_delete_message_row(t_user_message *message, int index) {
+void mx_delete_message_row(t_user_message *message) {
 	if (message && message->row) {
 		gtk_widget_destroy(message->row);
 		message->row = NULL;
@@ -368,12 +361,10 @@ void mx_delete_message_row(t_user_message *message, int index) {
 }
 
 
-gboolean mx_edit_message(t_edit_data *edit){
-	GtkWidget *temp_widget = NULL;
-
+gboolean mx_edit_message(t_edit_data *edit) {
 	if (edit->message && edit->message->row && edit->new_message){
 
-    	mx_delete_message_row(edit->message, edit->index);
+    	mx_delete_message_row(edit->message);
 		if (edit->message->owner_id == owner.id)
 			edit->message->row = mx_create_out_mess(edit->new_message->data, edit->new_message->nickname, edit->new_message->tv_id);
 		else
@@ -397,7 +388,7 @@ gboolean mx_delete_message(t_user_message *new_message) {
 
     if (message && index_msg != -1) {
     	mx_pop_index(history_message_list, index_msg);
-    	mx_delete_message_row(message, index_msg);
+    	mx_delete_message_row(message);
     	mx_messdel(&message);
     }
     return FALSE;
@@ -438,9 +429,9 @@ void mx_change_title(char *name){
 }
 
 int mx_do_reconnection(int rc) {
-	char buffer[BUF_SIZE];
 	t_client_info *info = get_client_info();
 	int counter = 0;
+
 	while(rc <= 0) {
 		sleep(CNCT_CLDN);
 		printf("TRY CONNECTING\n"); // выод на панели
@@ -451,7 +442,7 @@ int mx_do_reconnection(int rc) {
 			tls_ctx = NULL;
 		}
 		info->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (init_connection(0, info->argv, info->socket, start_data) == 0)
+		if (mx_init_connection(info->socket, start_data) == 0)
 			return 0;
 		if (counter++ == CNCT_AM)
 			return -1;
@@ -582,21 +573,21 @@ t_list *mx_create_hst_message_list(int list_size) {
 
 /* ============== TEST HISTORY ================*/
 
-void static print_node(t_list_node *node) {
-	static int i = 0;
-	t_user_message *mess = (t_user_message *)(node->data);
+// void static print_node(t_list_node *node) {
+// 	static int i = 0;
+// 	t_user_message *mess = (t_user_message *)(node->data);
 
-	printf("\n=================================================================================================\n");
-	printf("%d)\tMESSAGE FROM \"%s\"\t#%lu\tuser id: %d\t:::\t%s\n", i, mess->nickname, mess->tv_id, mess->owner_id, mess->data);
-	printf("=================================================================================================\n");
-	i++;
-}
+// 	printf("\n=================================================================================================\n");
+// 	printf("%d)\tMESSAGE FROM \"%s\"\t#%lu\tuser id: %d\t:::\t%s\n", i, mess->nickname, mess->tv_id, mess->owner_id, mess->data);
+// 	printf("=================================================================================================\n");
+// 	i++;
+// }
 
-void static print_history(t_list *list) {
-	system("clear");
-	printf("\n\t\t\t::: HISTORY LIST :::\n");
-	// mx_foreach_list(list, print_node);
-}
+// void static print_history(t_list *list) {
+// 	system("clear");
+// 	printf("\n\t\t\t::: HISTORY LIST :::\n");
+// 	// mx_foreach_list(list, print_node);
+// }
 
 void mx_do_history_request() {
 	const char *data;
@@ -610,10 +601,8 @@ void mx_do_history_request() {
 }
 
 void message_request_history(void) {
-	char *data = NULL;
 	char answ[BUF_SIZE];
 	json_object *jobj;
-	t_client_info *clnt = get_client_info();
 
 	// printf("*\n");
 	mx_do_history_request();
@@ -635,9 +624,8 @@ void message_request_history(void) {
 
 void init_chat_window(char *nickname)
 {
-	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/chat.glade");
-	GtkWidget *box1;
-	gint h, w;
+	GtkBuilder *builder = gtk_builder_new_from_file("client/gld/chat.glade");
+
 	history_message_list = mx_create_list();
 	chatWindow = GTK_WIDGET(gtk_builder_get_object(builder,"ChatWindow"));
 	gtk_window_set_title(GTK_WINDOW(chatWindow), nickname);
@@ -655,7 +643,6 @@ void init_chat_window(char *nickname)
 	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
 	
 	message_request_history();
-	print_history(history_message_list);
 	GtkCssProvider *cssStyle;
 	cssStyle = gtk_css_provider_new();
 	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);

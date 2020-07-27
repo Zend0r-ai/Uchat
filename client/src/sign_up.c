@@ -238,7 +238,7 @@ gboolean check_reg(void *param)
 
 void init_sign_up_window()
 {
-    GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/sign_up.glade");
+    GtkBuilder *builder = gtk_builder_new_from_file("client/gld/sign_up.glade");
 
     signUpWindow = GTK_WIDGET(gtk_builder_get_object(builder,"reg_window"));
     g_signal_connect(signUpWindow,"destroy", G_CALLBACK(open_start_win),NULL);

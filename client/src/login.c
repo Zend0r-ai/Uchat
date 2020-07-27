@@ -136,7 +136,7 @@ static void open_start_win(GtkWidget *widget, gpointer data)
 
 void init_login_window()
 {
-	GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/login.glade");
+	GtkBuilder *builder = gtk_builder_new_from_file("client/gld/login.glade");
 
 	loginWindow = GTK_WIDGET(gtk_builder_get_object(builder,"LoginWin"));
 	g_signal_connect(loginWindow,"destroy", G_CALLBACK(open_start_win),NULL);

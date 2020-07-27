@@ -16,13 +16,13 @@ void mx_print_usage(int num) {
             break;
         case 1: {
             printf("usage: ./uchat");
-            printf("\033[1;91m [ip]\e[0m");
+            printf("\033[1;91m [ip]\033[0m");
             printf(" [port (> 1024)]\n");
             break;
         }
         case 2: {
             printf("usage: ./uchat [ip]");
-            printf("\033[1;91m [port (> 1024)]\n\e[0m");
+            printf("\033[1;91m [port (> 1024)]\n\033[0m");
             break;
         }
     }
@@ -69,7 +69,7 @@ t_start *mx_check_input(int argc, char *argv[]){
     return start;
 }
 
-int init_connection(int argc,char *argv[], int sock, t_start *start_data) {
+int mx_init_connection(int sock, t_start *start_data) {
     struct sockaddr_in addr;
     tls_cfg = NULL;
     tls_ctx = NULL;
@@ -126,7 +126,7 @@ int main(int argc,char *argv[]){
 
     info->socket = sock;
     start_data = mx_check_input(argc, argv);
-    if (init_connection(argc, argv, sock, start_data) < 0)
+    if (mx_init_connection(sock, start_data) < 0)
         return -1;
     gtk_init(&argc, &argv);
     init_start_window();

@@ -139,7 +139,7 @@ char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
 char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);
 void mx_do_message_request(t_user_message *message, const char *request);
-void mx_delete_message_row(t_user_message *message, int index);
+void mx_delete_message_row(t_user_message *message);
 t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
 void do_send();
 void *read_server_thread(void *par);
@@ -150,7 +150,7 @@ char *message_do_login(t_user_info *log_par);
 void mx_report_tls(struct tls * tls_ctx, char * host);
 
 /* =========== RECONNECTION ========== */
-int init_connection(int argc,char *argv[], int sock, t_start *start_data);
+int mx_init_connection(int sock, t_start *start_data);
 int mx_do_reconnection(int rc);
 
 #endif

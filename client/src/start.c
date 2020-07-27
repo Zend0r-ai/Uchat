@@ -57,7 +57,7 @@ void open_reg_win(GtkWidget *widget, gpointer data)
 
 void init_start_window()
 {
-    GtkBuilder *builder = gtk_builder_new_from_resource("/org/gtk/client/start.glade");
+    GtkBuilder *builder = gtk_builder_new_from_file("client/gld/start.glade");
 
     StartWindow = GTK_WIDGET(gtk_builder_get_object(builder,"start_window"));
 
