@@ -53,13 +53,9 @@ void *mx_proc_server_back(char *buffer, t_user_info *user) {
     const char *type = json_object_get_string(json_object_object_get(jobj, "type"));
     void *back = NULL;
 
-    // if (user->last_server_back) {
-    //     mx_strdel(&(user->last_server_back));
-    // }
     user->last_server_back = strdup(type);
     if (strcmp(type, "log_in_back") == 0) {
         back = mx_proc_log_in_back(jobj, user);
-        // json_object_put(jobj);
         return back;
     }
     else if (strcmp(type, "sign_up_back") == 0) {
@@ -130,6 +126,10 @@ char *message_do_sing_up(t_user_info *reg_par) {
 //     return param;
 // }
 
+void mx_change_status(char *temp){
+    gtk_label_set_text(GTK_LABEL(statusLabel), temp);
+}
+
 void *sing_up_thread(void *param)
 {
  // char *res = "incorrect login or password";
@@ -140,7 +140,8 @@ void *sing_up_thread(void *param)
        res = message_do_sing_up((t_user_info *)param);
     if(res)
     {
-        gtk_label_set_text(GTK_LABEL(statusLabel), res);
+        gdk_threads_add_idle((GSourceFunc)mx_change_status, res);
+        // gtk_label_set_text(GTK_LABEL(statusLabel), res);
         // message_disconnect();
     }
     else
@@ -155,6 +156,10 @@ void *sing_up_thread(void *param)
     return param;
 }
 
+void mx_grab_focus(GtkWidget *temp){
+    gtk_widget_grab_focus(temp);
+}
+
 void do_reg(GtkWidget *widget, gpointer data)
 {
     (void) widget;
@@ -165,36 +170,46 @@ void do_reg(GtkWidget *widget, gpointer data)
     login = gtk_entry_get_text(GTK_ENTRY(loginEntry));
     if(!login || !*login)
     {
-        gtk_widget_grab_focus(loginEntry);
+        gdk_threads_add_idle((GSourceFunc)mx_grab_focus, loginEntry);
+        // gtk_widget_grab_focus(loginEntry);
         return;
     }
     nickname = gtk_entry_get_text(GTK_ENTRY(nicknameEntry));
     if(!nickname || !*nickname)
     {
-        gtk_widget_grab_focus(nicknameEntry);
+        gdk_threads_add_idle((GSourceFunc)mx_grab_focus, nicknameEntry);
+        // gtk_widget_grab_focus(nicknameEntry);
         return;
     }
     password = gtk_entry_get_text(GTK_ENTRY(passwordEntry));
     if(!password || !*password)
     {
-        gtk_widget_grab_focus(passwordEntry);
+        gdk_threads_add_idle((GSourceFunc)mx_grab_focus, passwordEntry);
+        // gtk_widget_grab_focus(passwordEntry);
         return;
     }
     confpass = gtk_entry_get_text(GTK_ENTRY(passwordConfirm));
     if(!confpass || !*confpass)
     {
-        gtk_widget_grab_focus(passwordConfirm);
+        gdk_threads_add_idle((GSourceFunc)mx_grab_focus, passwordConfirm);
+        // gtk_widget_grab_focus(passwordConfirm);
         return;
     }
     t_user_info *ri = malloc(sizeof(t_user_info));
-    ri->login = (char *)login;
-    ri->password = (char *)password;
-    ri->confpass = (char *)confpass;
+
+    // encrypting login and password:
+    char salt[3];
+    salt[2] = '\0';
+    salt[0] = login[0];
+    salt[1] = login[1];
+    ri->login = strdup(crypt((char *)login, salt)); // free() memory
+    salt[0] = password[0];
+    salt[1] = password[1];
+    ri->password = strdup(crypt((char *)password, salt)); // free() memory
+    ri->confpass = strdup(crypt((char *)confpass, salt)); // free() memory
     ri->nickname = (char *)nickname;
-    // init_login_window();
-    // gtk_widget_set_sensitive(regButton, 1);
-    // gtk_widget_hide(signUpWindow);
-    // gtk_widget_show_all(loginWindow);
+
+
     pthread_create(&reginer, 0, sing_up_thread, (void *)ri);
 }
 

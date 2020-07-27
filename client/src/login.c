@@ -90,8 +90,17 @@ void do_login(GtkWidget *widget, gpointer data)
 	}
 	gtk_widget_set_sensitive(loginButton, 0);
 	t_user_info *li = malloc(sizeof(t_user_info));
-	li->login = (char *)login;
-	li->password = (char *)password;
+
+	// encrypting login and password:
+	char salt[3];
+	salt[2] = '\0';
+	salt[0] = login[0];
+	salt[1] = login[1];
+	li->login = strdup(crypt((char *)login, salt)); // free() memory
+	salt[0] = password[0];
+	salt[1] = password[1];
+	li->password = strdup(crypt((char *)password, salt)); // free() memory
+
 	pthread_create(&loginner, 0, login_thread, (void *)li);
 }
 

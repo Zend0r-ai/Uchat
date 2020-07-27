@@ -79,10 +79,8 @@ int init_connection(int argc,char *argv[], int sock, t_start *start_data) {
         return -1;
     }
     addr.sin_family = AF_INET;
-    // addr.sin_port = htons(5003);
     addr.sin_port = htons(start_data->port);
     addr.sin_addr.s_addr = inet_addr(start_data->ip);
-    // inet_aton("10.111.3.11", &addr.sin_addr);
     inet_aton(start_data->ip, &addr.sin_addr);
     if (tls_init() == -1)
         errx(1, "unable to initialize TLS");
@@ -116,13 +114,11 @@ int init_connection(int argc,char *argv[], int sock, t_start *start_data) {
     int i = 0;
     if ((i = tls_handshake(tls_ctx)) == -1)
             errx(1, "tls handshake failed (%s)", tls_error(tls_ctx));
-    mx_report_tls(tls_ctx, "uchat");
+    // mx_report_tls(tls_ctx, "uchat");
     return 0;
 }
 
 int main(int argc,char *argv[]){
-	// argc = 0;
- //    argv = NULL;
     t_client_info *info = get_client_info();
     info->argv = argv;
     owner.last_server_back = NULL;

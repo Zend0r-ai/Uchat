@@ -115,6 +115,7 @@ struct tls_config *tls_cfg;
 struct tls *tls_ctx;
 t_start *start_data;
 bool is_editing;
+volatile bool lock;
 // GtkWidget *widget_list;
 
 

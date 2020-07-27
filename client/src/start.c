@@ -85,5 +85,4 @@ void init_start_window()
     gtk_widget_set_name(RegButton, "send_button");
     gtk_widget_set_name(SignInButton, "send_button");
     gtk_widget_set_name(NameLabel, "name_label");
-
 }
