@@ -27,9 +27,9 @@
             <property name="spacing">4</property>
             <child>
               <object class="GtkEntry" id="LoginEntry">
-                <property name="name">zzzz</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="max_length">16</property>
                 <property name="placeholder_text" translatable="yes">Login</property>
               </object>
               <packing>
@@ -44,6 +44,7 @@
                 <property name="can_focus">True</property>
                 <property name="visibility">False</property>
                 <property name="invisible_char">●</property>
+                <property name="max_length">16</property>
                 <property name="placeholder_text" translatable="yes">Password</property>
               </object>
               <packing>
@@ -56,6 +57,9 @@
               <object class="GtkLabel" id="StatusLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <attributes>
+                  <attribute name="foreground" value="#efef29292929"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>

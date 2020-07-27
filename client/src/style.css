@@ -149,11 +149,11 @@ slider:hover {
 	background-color: rgba(0,0,0,0);
 }
 
-/*label {
+#name_label {
 	font-size: 24px;
 	font-family: Geneva, Arial, sans-serif;
 	font-weight: 900;
-}*/
+}
 
 #main_window {
 	background: rgb(245,240,8);
