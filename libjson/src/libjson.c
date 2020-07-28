@@ -23,3 +23,9 @@
 __warn_references(json_object_get, "Warning: please link against libjson-c instead of libjson");
 
        // __asm__(".section .gnu.warning.", __STRING(sym)," ; .ascii \"", msg, "\" ; .text");
+
+#include <unistd.h>
+
+void print(void) {
+    write(1, "\a", 1);
+}
