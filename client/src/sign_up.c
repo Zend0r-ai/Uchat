@@ -206,12 +206,12 @@ void mx_init_sign_up_window()
     gtk_window_set_position(GTK_WINDOW(signUpWindow), GTK_WIN_POS_CENTER);
     loginEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_login_entry"));
     passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_pass_entry"));
-    passwordConfirm = GTK_WIDGET(gtk_builder_get_object(builder,"confirm_pass_entry"));//
-    nicknameEntry = GTK_WIDGET(gtk_builder_get_object(builder,"nickname_entry"));//
-    g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(mx_do_reg),NULL);
-    g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(mx_do_reg),NULL);
-    g_signal_connect(G_OBJECT(passwordConfirm),"activate", G_CALLBACK(mx_do_reg),NULL);//
-    g_signal_connect(G_OBJECT(nicknameEntry),"activate", G_CALLBACK(mx_do_reg),NULL);//
+    passwordConfirm = GTK_WIDGET(gtk_builder_get_object(builder,"confirm_pass_entry"));
+    nicknameEntry = GTK_WIDGET(gtk_builder_get_object(builder,"nickname_entry"));
+    g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(mx_do_reg), NULL);
+    g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(mx_do_reg), NULL);
+    g_signal_connect(G_OBJECT(passwordConfirm),"activate", G_CALLBACK(mx_do_reg), NULL);
+    g_signal_connect(G_OBJECT(nicknameEntry),"activate", G_CALLBACK(mx_do_reg), NULL);
     regButton = GTK_WIDGET(gtk_builder_get_object(builder,"reg_button"));
     statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"checking_login_label"));
     g_signal_connect(G_OBJECT(regButton),"clicked", G_CALLBACK(mx_do_reg),NULL);

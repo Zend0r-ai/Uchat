@@ -31,15 +31,12 @@ char *mx_message_do_login(t_user_info *log_par) {
         }
 
 	}
-	printf("%s\n", strerror(errno));
-	printf("SUDA rc = %d\n", rc);
 	if (tls_read(tls_ctx, answ, BUF_SIZE) <= 0) {
 		rc = mx_do_reconnection(-1);
         if (rc < 0) {
             return LG_ERROR_CONNECTION; 
         }
 	}
-	printf("SERVER ::: %s\n", answ);
 	json_object_put(jobj);
 	return mx_proc_server_back(answ, log_par);
 }

@@ -33,15 +33,11 @@ t_user_message *mx_proc_message_back(json_object *jobj) { // do free data
 
     if (error == 0 && msg_body && *msg_body) {
     	message = (t_user_message *)malloc(sizeof(t_user_message));
-	    printf("\nMESSAGE from %s\t:::\t\" %s \"\n", user_nickname, msg_body);
 	    message->owner_id = user_id;
 	    message->data = msg_body;
 	    message->tv_id = time_id;
 	    message->nickname = user_nickname;
 	    message->row = NULL;
-	}
-	if (message) {
-		printf("DEBUG_MESSAGE: %d, %s, %lu, %s\n", message->owner_id, message->data, message->tv_id, message->nickname);
 	}
     return message;
 }
@@ -64,8 +60,7 @@ void mx_do_message_request(t_user_message *message, const char *request) {
 	json_object_object_add(jobj, "msg_time", j_msg_id);
 	json_object_object_add(jobj, "user_id", j_id);
 	json_object_object_add(jobj, "user_nickname", j_nick);
-	data = (char *)json_object_to_json_string(jobj);
-	printf("CLIENT->SERVER: %s", data);                                            	/***************/
+	data = (char *)json_object_to_json_string(jobj);                                          	/***************/
 	if (tls_write(tls_ctx, data, strlen(data)) == -1) {
 		printf("error = %s\n", strerror(errno));
 	}
@@ -93,7 +88,6 @@ void *mx_read_server_thread(void *par) {
 			continue;
 		}
 		answ[tail] = '\0';
-		printf("SERVER THREAD: %s\n", answ);
 		message = mx_proc_server_back(answ, &owner);
 		if (!message)
 			continue;
@@ -116,7 +110,6 @@ void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
     }
     else if (strcmp(type, "update_message_back") == 0) {
     	index_msg = mx_get_index_history_message(history_message_list, new_message->owner_id, new_message->tv_id, &message);
-    	printf("INDEX :::::::::::::::::::::: %d\n", index_msg);
     	message->data = strdup(new_message->data);
     	edit->message = message;
     	edit->new_message = new_message;

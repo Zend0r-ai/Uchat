@@ -2,21 +2,21 @@
 
 /* ============== TEST HISTORY ================*/
 
-void static print_node(t_list_node *node) {
-	static int i = 0;
-	t_user_message *mess = (t_user_message *)(node->data);
+// void static print_node(t_list_node *node) {
+// 	static int i = 0;
+// 	t_user_message *mess = (t_user_message *)(node->data);
 
-	printf("\n=================================================================================================\n");
-	printf("%d)\tMESSAGE FROM \"%s\"\t#%lu\tuser id: %d\t:::\t%s\n", i, mess->nickname, mess->tv_id, mess->owner_id, mess->data);
-	printf("=================================================================================================\n");
-	i++;
-}
+// 	printf("\n=================================================================================================\n");
+// 	printf("%d)\tMESSAGE FROM \"%s\"\t#%lu\tuser id: %d\t:::\t%s\n", i, mess->nickname, mess->tv_id, mess->owner_id, mess->data);
+// 	printf("=================================================================================================\n");
+// 	i++;
+// }
 
-void print_history() {
-	system("clear");
-	printf("\n\t\t\t::: HISTORY LIST :::\n");
-	mx_foreach_list(history_message_list, print_node);
-}
+// void print_history() {
+// 	system("clear");
+// 	printf("\n\t\t\t::: HISTORY LIST :::\n");
+// 	mx_foreach_list(history_message_list, print_node);
+// }
 
 /* ============ END TEST HISTORY ===============*/
 

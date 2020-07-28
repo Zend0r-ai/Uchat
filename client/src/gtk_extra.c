@@ -31,6 +31,7 @@ void mx_change_status(char *temp) {
     gtk_label_set_text(GTK_LABEL(statusLabel), temp);
 }
 
-void mx_grab_focus(GtkWidget *temp) {
+gboolean mx_grab_focus(GtkWidget *temp) {
     gtk_widget_grab_focus(temp);
+    return FALSE;
 }

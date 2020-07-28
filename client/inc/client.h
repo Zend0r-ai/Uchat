@@ -176,7 +176,7 @@ void mx_change_title(char *name);
 int mx_show_popup(GtkWidget *widget, GdkEvent *event);
 void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
 void mx_change_status(char *temp);
-void mx_grab_focus(GtkWidget *temp);
+gboolean mx_grab_focus(GtkWidget *temp);
 
 /* ==================== EXTRA ======================= */
 
@@ -234,6 +234,7 @@ void mx_report_tls(struct tls * tls_ctx, char * host);
 /* =========== RECONNECTION ========== */
 int mx_init_connection(int sock, t_start *start_data);
 int mx_do_reconnection(int rc);
-void print_history();
+
+// void print_history();
 
 #endif

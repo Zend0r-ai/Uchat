@@ -1,7 +1,6 @@
 NAME	=	uchat_server
 
-CFLG	=	-std=c11 $(addprefix -W, all extra error pedantic) -g
-DFLAGS = -O0 -g3 -glldb -ftrapv -fno-omit-frame-pointer -fsanitize=address
+CFLG	=	-std=c11 -Wall -Wextra -Werror -Wpedantic
 
 SRCD	=	src
 INCD	=	inc
@@ -62,7 +61,7 @@ all: $(NAME)
 $(FILE:a/%=%)
 
 $(NAME): $(JSONA) $(OBJS)
-	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -lsqlite3 -o $@ $(JSONA) $(LIBRESSL_H) $(LIBRESSL_A) $(DFLAGS)
+	@clang $(CFLG) $(OBJS) -lmx -L$(JSOND) -lsqlite3 -o $@ $(JSONA) $(LIBRESSL_H) $(LIBRESSL_A)
 	@printf "\r\33[2K$@ \033[32;1mcreated\033[0m\n"
 
 $(OBJD)/%.o: $(SRCD)/%.c $(INCS)

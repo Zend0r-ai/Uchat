@@ -5,8 +5,7 @@ void mx_delete_mess(GtkWidget *widget, gpointer data) {
 	if (is_editing)
 		return;
 	t_user_message *current_message = mx_find_row_from_list__row(data);
-	print_history();
-	printf(":::::::: %p\n", (void *)current_message);
+	// print_history();
 
 	if (current_message) {
 		mx_do_message_request(current_message, "delete_message");

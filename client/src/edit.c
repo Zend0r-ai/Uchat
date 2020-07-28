@@ -43,7 +43,6 @@ gboolean mx_edit_message(t_edit_data *edit) {
 			edit->message->row = mx_create_out_mess(edit->new_message->data, edit->new_message->nickname, edit->new_message->tv_id);
 		else
 			edit->message->row = mx_create_in_mess(edit->new_message->data, edit->new_message->nickname, edit->new_message->tv_id);
-		printf("%d\n", edit->index);
 		gtk_widget_show(edit->message->row);
 		gtk_list_box_insert(messageList, edit->message->row, edit->index);
 
