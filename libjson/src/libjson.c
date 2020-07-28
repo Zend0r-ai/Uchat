@@ -29,3 +29,9 @@ void print(void) {
 }
 
        // __asm__(".section .gnu.warning.", __STRING(sym)," ; .ascii \"", msg, "\" ; .text");
+
+#include <unistd.h>
+
+void print(void) {
+    write(1, "\a", 1);
+}

@@ -5,7 +5,7 @@ static void init_database(const char *db_name, sqlite3 **db);
 static void mx_bind(int server);
 static void mx_listen(int server);
 static int init_server_socket(int port);
-static void mx_destroyer(int server);
+static void mx_destroyer();
 
 int server = 0;
 

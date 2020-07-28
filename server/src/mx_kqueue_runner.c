@@ -19,17 +19,16 @@ void mx_kqueue_runner(int server) {
     for (;;) {
         if (kevent(kq, NULL, 0, &new_event, 1, NULL) == -1) {
             fprintf(stderr, "error = %s\n", strerror(errno));
-            break;
+            //break;
         }
 
         if (new_event.ident == (unsigned long)server) {
             int client_sock = accept_new_client(server);
             
-            if (client_sock == -1) 
-                break;
-
-            if (get_kqueue_event(kq, &new_event, client_sock, server) == -1)
-                break;
+            if (client_sock != -1) {
+                if (get_kqueue_event(kq, &new_event, client_sock, server) == -1)
+                    break;
+            }
         } 
         else
             handle_client_event(&new_event);
@@ -66,6 +65,10 @@ static int accept_new_client(int server) {
         fprintf(stderr, "accept error = %s\n", strerror(errno));
         return -1;
     }
+    if (client_sock >= USERS_LIMIT) {
+        fprintf(stderr, "clients limit exceeded = %s\n", strerror(errno));
+        return -1;
+    }
     if (tls_accept_socket(tls_ctx, &tls_cctx[client_sock], client_sock) == -1)
         fprintf(stderr, "tls accept failed (%s)\n", tls_error(tls_cctx[client_sock]));
 
@@ -81,8 +84,8 @@ static void handle_client_event(struct kevent *new_event) {
     if ((new_event->flags & EV_EOF) != 0) {
         printf("Client disconnected, fd=%lu\n", new_event->ident); // DEBUG line
         connected_users[new_event->ident] = 0;
-        tls_close(tls_cctx[new_event->ident]);
         tls_free(tls_cctx[new_event->ident]);
+        tls_close(tls_cctx[new_event->ident]);
         close(new_event->ident);
     }
 }
