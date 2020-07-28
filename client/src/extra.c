@@ -33,7 +33,7 @@ void mx_zero_string(char *arr) {
 void *mx_find_row_from_list__row(void *widget) {
 	for (t_list_node *node = history_message_list->head; node; node = node->next) {
 
-		if (node && node->data && widget == (void *)(((t_user_message *)(node->data))->row))
+		if (/*node && node->data && */widget == (void *)(((t_user_message *)(node->data))->row))
 			return (t_user_message *)(node->data);
 	}
 	return NULL;

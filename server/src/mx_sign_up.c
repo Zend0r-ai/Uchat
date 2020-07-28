@@ -24,5 +24,6 @@ void mx_sign_up(json_object *jobj, int fd_from) {
     json_object_object_add(jback, "error", j_error);
 
     char *json_str = (char *)json_object_to_json_string(jback);
+    //printf("json object = %s\n", json_str);
     mx_write_to_socket(json_str, fd_from, 0);
 }
