@@ -31,7 +31,7 @@ void open_login_win(GtkWidget *widget, gpointer data)
 {
     (void) widget;
     (void) data;
-    init_login_window();
+    mx_init_login_window();
     gtk_widget_set_sensitive(SignInButton, 1);
     gtk_widget_hide(StartWindow);
     gtk_widget_show_all(loginWindow);
@@ -42,7 +42,7 @@ void open_reg_win(GtkWidget *widget, gpointer data)
 {
     (void) widget;
     (void) data;
-    init_sign_up_window();
+    mx_init_sign_up_window();
     gtk_widget_set_sensitive(RegButton, 1);
     gtk_widget_hide(StartWindow);
     gtk_widget_show_all(signUpWindow);
@@ -55,7 +55,7 @@ void open_reg_win(GtkWidget *widget, gpointer data)
 //             GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 // }
 
-void init_start_window()
+void mx_init_start_window()
 {
     GtkBuilder *builder = gtk_builder_new_from_file("client/gld/start.glade");
 

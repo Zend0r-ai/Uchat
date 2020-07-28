@@ -45,16 +45,16 @@
 #define CNCT_CLDN 5     // COOL DOWN
 
 
-void init_chat_window();
+void mx_init_chat_window();
 extern GtkWidget *chatWindow;
 
-void init_login_window();
+void mx_init_login_window();
 extern GtkWidget *loginWindow;
 
-void init_sign_up_window();
+void mx_init_sign_up_window();
 extern GtkWidget *signUpWindow;
 
-void init_start_window();
+void mx_init_start_window();
 extern GtkWidget *StartWindow;
 
 typedef struct s_row t_row;
@@ -132,19 +132,87 @@ typedef struct s_edit_data {
 
 t_client_info *get_client_info(void);
 
-void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
+/* ================== SERVER HANDLER ================== */
 
 void *mx_proc_server_back(char *buffer, t_user_info *user);
-char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
-char *mx_proc_sign_up_back(json_object *jobj);
 t_user_message *mx_proc_message_back(json_object *jobj);
 void mx_do_message_request(t_user_message *message, const char *request);
+void *mx_read_server_thread(void *par);
+
+/* =================== SIGN UP ====================== */
+
+char *mx_proc_sign_up_back(json_object *jobj);
+char *mx_message_do_sing_up(t_user_info *reg_par);
+void *mx_sing_up_thread(void *param);
+gboolean mx_check_reg(void *param);
+void mx_do_reg(GtkWidget *widget, gpointer data);
+
+/* =================== SIGN IN ====================== */
+
+char *mx_message_do_login(t_user_info *log_par);
+void *mx_login_thread(void *param);
+void mx_do_login(GtkWidget *widget, gpointer data);
+gboolean mx_check_login(void *param);
+char *mx_proc_log_in_back(json_object *jobj, t_user_info *user);
+
+/* ================== GTK EXTRA ===================== */
+
+gboolean mx_autoscroll();
+void mx_change_title(char *name);
+int mx_show_popup(GtkWidget *widget, GdkEvent *event);
+void mx_css_set(GtkCssProvider *cssProvider, GtkWidget *widget);
+void mx_change_status(char *temp);
+void mx_grab_focus(GtkWidget *temp);
+
+/* ==================== EXTRA ======================= */
+
+bool mx_is_message_by_data(t_list_node *node, int owner_id, int message_id, t_user_message **message);
+char *mx_short_time(time_t *t);
+void mx_zero_string(char *arr);
+void *mx_find_row_from_list__row(void *widget);
+void mx_fill_user(t_user_info *to, t_user_info *from);
+
+/* ==================== FREE ======================== */
+
+void mx_messdel(t_user_message **message);
+void mx_clear_node(t_list_node *node);
+
+/* ================ GTK HISTORY ===================== */
+
+void mx_listbox_node_cleaning(t_list_node *node);
+gboolean mx_listbox_cleaning();
+GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text, time_t time_v);
+GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text, time_t time_v);
+
+/* ================== HISTORY ======================= */
+
+void mx_message_request_history(void);
+void mx_do_history_request();
+t_list *mx_create_hst_message_list(int list_size);
+void mx_do_history_ready();
+int mx_history_size(json_object *jobj);
+
+void mx_clear_history(void);
+int mx_get_index_history_message(t_list *list, int owner_id, int message_id, t_user_message **message);
+
+/* =================== ADD ========================= */
+
+gboolean mx_add_message_widget(t_user_message *new_message);
+void mx_do_send();
+
+/* ================== DELETE ======================= */
+
+void mx_delete_mess(GtkWidget *widget, gpointer data);
 void mx_delete_message_row(t_user_message *message);
+gboolean mx_delete_message(t_user_message *new_message);
+
+/* ================== EDIT ======================= */
+
+void mx_edit_message_complite(GtkWidget *widget, gpointer data);
 t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
-void do_send();
-void *read_server_thread(void *par);
-void message_request_history(void);
-char *message_do_login(t_user_info *log_par);
+void mx_edit_mess(GtkWidget *widget, gpointer data);
+t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
+gboolean mx_edit_message(t_edit_data *edit);
 
 /* =============== TLS =============== */
 void mx_report_tls(struct tls * tls_ctx, char * host);

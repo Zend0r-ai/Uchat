@@ -73,7 +73,7 @@ void *mx_proc_server_back(char *buffer, t_user_info *user) {
 
 /*====================== GLOBAL END =====================*/
 
-char *message_do_sing_up(t_user_info *reg_par) {
+char *mx_message_do_sing_up(t_user_info *reg_par) {
     char *data = NULL;
     char answ[1024];
     int rc = -1;
@@ -126,18 +126,18 @@ char *message_do_sing_up(t_user_info *reg_par) {
 //     return param;
 // }
 
-void mx_change_status(char *temp){
+void mx_change_status(char *temp) {
     gtk_label_set_text(GTK_LABEL(statusLabel), temp);
 }
 
-void *sing_up_thread(void *param)
+void *mx_sing_up_thread(void *param)
 {
  // char *res = "incorrect login or password";
     char *res = NULL;
 //    char *res = message_connect(((t_user_info *)param)->ip, ((t_user_info *)param)->iport);
     //ippppp port
     if(!res)
-       res = message_do_sing_up((t_user_info *)param);
+       res = mx_message_do_sing_up((t_user_info *)param);
     if(res)
     {
         gdk_threads_add_idle((GSourceFunc)mx_change_status, res);
@@ -156,11 +156,11 @@ void *sing_up_thread(void *param)
     return param;
 }
 
-void mx_grab_focus(GtkWidget *temp){
+void mx_grab_focus(GtkWidget *temp) {
     gtk_widget_grab_focus(temp);
 }
 
-void do_reg(GtkWidget *widget, gpointer data)
+void mx_do_reg(GtkWidget *widget, gpointer data)
 {
     (void) widget;
     (void) data;
@@ -210,24 +210,24 @@ void do_reg(GtkWidget *widget, gpointer data)
     ri->nickname = (char *)nickname;
 
 
-    pthread_create(&reginer, 0, sing_up_thread, (void *)ri);
+    pthread_create(&reginer, 0, mx_sing_up_thread, (void *)ri);
 }
 
 static void open_start_win(GtkWidget *widget, gpointer data)
 {
     (void) widget;
     (void) data;
-    init_start_window();
+    mx_init_start_window();
     gtk_widget_hide(signUpWindow);
     gtk_widget_show_all(StartWindow);
 }
 
-gboolean check_reg(void *param)
+gboolean mx_check_reg(void *param)
 {
     (void) param;
     if(regged_in)
     {
-        init_login_window();
+        mx_init_login_window();
         gtk_widget_hide(signUpWindow);
         gtk_widget_show_all(loginWindow);
         regged_in = 0;
@@ -236,7 +236,7 @@ gboolean check_reg(void *param)
     return G_SOURCE_CONTINUE;
 }
 
-void init_sign_up_window()
+void mx_init_sign_up_window()
 {
     GtkBuilder *builder = gtk_builder_new_from_file("client/gld/sign_up.glade");
 
@@ -248,13 +248,13 @@ void init_sign_up_window()
     passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_pass_entry"));
     passwordConfirm = GTK_WIDGET(gtk_builder_get_object(builder,"confirm_pass_entry"));//
     nicknameEntry = GTK_WIDGET(gtk_builder_get_object(builder,"nickname_entry"));//
-    g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(do_reg),NULL);
-    g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(do_reg),NULL);
-    g_signal_connect(G_OBJECT(passwordConfirm),"activate", G_CALLBACK(do_reg),NULL);//
-    g_signal_connect(G_OBJECT(nicknameEntry),"activate", G_CALLBACK(do_reg),NULL);//
+    g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(mx_do_reg),NULL);
+    g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(mx_do_reg),NULL);
+    g_signal_connect(G_OBJECT(passwordConfirm),"activate", G_CALLBACK(mx_do_reg),NULL);//
+    g_signal_connect(G_OBJECT(nicknameEntry),"activate", G_CALLBACK(mx_do_reg),NULL);//
     regButton = GTK_WIDGET(gtk_builder_get_object(builder,"reg_button"));
     statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"checking_login_label"));
-    g_signal_connect(G_OBJECT(regButton),"clicked", G_CALLBACK(do_reg),NULL);
+    g_signal_connect(G_OBJECT(regButton),"clicked", G_CALLBACK(mx_do_reg),NULL);
     
     GtkCssProvider *cssStyle;
     cssStyle = gtk_css_provider_new();
@@ -267,6 +267,6 @@ void init_sign_up_window()
     gtk_widget_set_name(regButton, "send_button");
     
     regged_in = 0;
-    g_timeout_add(50, check_reg, 0);
+    g_timeout_add(50, mx_check_reg, 0);
     // g_timeout_add(50, check_login, 0);
 }

@@ -7,6 +7,8 @@ INCD	=	inc
 OBJD	=	obj
 GLDD	=	gld
 
+SDIR	=	uchat.dSYM
+
 
 INC		=	client.h
 INCS	=	$(addprefix $(INCD)/, $(INC))
@@ -71,6 +73,7 @@ clean:
 
 uninstall: clean
 	@make -sC $(JSOND) $@
+	rm -rf $(SDIR)
 	@rm -rf $(NAME)
 	@printf "$(NAME) \033[31;1muninstalled\033[0m\n"
 

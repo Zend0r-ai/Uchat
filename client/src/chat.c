@@ -36,7 +36,7 @@ void *mx_find_row_from_list__row(void *widget) {
 	return NULL;
 }
 
-void mx_delete_mess(GtkWidget *widget, gpointer data){
+void mx_delete_mess(GtkWidget *widget, gpointer data) {
 	widget = NULL;
 	if (is_editing)
 		return;
@@ -47,7 +47,7 @@ void mx_delete_mess(GtkWidget *widget, gpointer data){
 	}
 }
 
-void mx_edit_message_complite(GtkWidget *widget, gpointer data){
+void mx_edit_message_complite(GtkWidget *widget, gpointer data) {
 	(void) widget;
 	char *new_mess = (char *)gtk_entry_get_text(GTK_ENTRY(sendEntry));
 	t_user_message *temp = mx_create_edit_message((t_user_message *)data, new_mess);
@@ -57,7 +57,7 @@ void mx_edit_message_complite(GtkWidget *widget, gpointer data){
 	}
 }
 
-void mx_edit_mess(GtkWidget *widget, gpointer data){
+void mx_edit_mess(GtkWidget *widget, gpointer data) {
 	is_editing = true;
 	t_user_message *current_message = mx_find_row_from_list__row(data);
 
@@ -84,7 +84,7 @@ gboolean mx_listbox_cleaning(){
 	return FALSE;
 }
 
-static char *short_time(time_t *t) {
+char *mx_short_time(time_t *t) {
     char *s;
     if ((time(0) - *t) < 86400 && (time(0) - *t) >= 0)
         s = mx_strndup((ctime)(t) + 11, 5);
@@ -95,7 +95,7 @@ static char *short_time(time_t *t) {
     return s;
 }
 
-GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text, time_t time_v){
+GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text, time_t time_v) {
 	GtkWidget *row;
 	GtkWidget *in_row;
 	GtkWidget *nickname;
@@ -122,7 +122,7 @@ GtkWidget *mx_create_in_mess(const char *message_text, const char *login_text, t
 	message = gtk_button_new();
     gtk_widget_show(message);
 	gtk_container_add (GTK_CONTAINER(message), message_label);
-	time = gtk_label_new(short_time(&time_v));
+	time = gtk_label_new(mx_short_time(&time_v));
     gtk_widget_show(time);
 	void_box = gtk_box_new(FALSE, 0);
     gtk_widget_show(void_box);
@@ -182,7 +182,7 @@ GtkWidget *mx_create_out_mess(const char *message_text, const char *login_text, 
 	message = gtk_button_new();
     gtk_widget_show(message);
 	gtk_container_add (GTK_CONTAINER(message), message_label);
-	time = gtk_label_new(short_time(&time_v));
+	time = gtk_label_new(mx_short_time(&time_v));
     gtk_widget_show(time);
 	void_box = gtk_box_new(FALSE, 0);
     gtk_widget_show(void_box);
@@ -328,7 +328,7 @@ void mx_do_message_request(t_user_message *message, const char *request) {
 	}
 }
 
-void *watcher_thread(void *param)
+void *mx_watcher_thread(void *param)
 {
 	mx_do_message_request((t_user_message *)param, "new_message");
 	return param;
@@ -376,8 +376,8 @@ gboolean mx_edit_message(t_edit_data *edit) {
 		gtk_entry_set_text(GTK_ENTRY(sendEntry), "");
 		g_signal_handler_disconnect(sendEntry, hendler_id_entry);
 		g_signal_handler_disconnect(sendButton, hendler_id_button);
-		hendler_id_entry = g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(do_send), NULL);
-		hendler_id_button = g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(do_send), NULL);
+		hendler_id_entry = g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(mx_do_send), NULL);
+		hendler_id_button = g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(mx_do_send), NULL);
 	}
 	return FALSE;
 }
@@ -419,7 +419,7 @@ void mx_switch_message_back(t_user_info *user, t_user_message *new_message) {
     }
 }
 
-void mx_change_title(char *name){
+void mx_change_title(char *name) {
 	if(name == NULL){
 		gtk_window_set_title(GTK_WINDOW(chatWindow), "Connection...");
 	}
@@ -463,7 +463,7 @@ void mx_clear_history(void) {
 		mx_pop_back(history_message_list);
 }
 
-void *read_server_thread(void *par) {
+void *mx_read_server_thread(void *par) {
 	char answ[BUF_SIZE];
 	int tail = 0;
 	t_user_message *message = NULL;
@@ -476,12 +476,12 @@ void *read_server_thread(void *par) {
 				exit(1);
 			lock = false;
     		gdk_threads_add_idle((GSourceFunc)mx_listbox_cleaning, NULL);
-			for (int i = 0; i < CNCT_AM && message_do_login(&owner); i++);
+			for (int i = 0; i < CNCT_AM && mx_message_do_login(&owner); i++);
 
 			gdk_threads_add_idle((GSourceFunc)mx_change_title, (void *)owner.nickname);
 			while (lock) {};
 			mx_clear_history();
-			message_request_history();
+			mx_message_request_history();
 			continue;
 		}
 		answ[tail] = '\0';
@@ -500,7 +500,7 @@ gboolean mx_autoscroll(){
     return TRUE;
 }
 
-void do_send() {
+void mx_do_send() {
 	char *mess_data;
 
 	mess_data = strdup(gtk_entry_get_text(GTK_ENTRY(sendEntry)));
@@ -515,14 +515,14 @@ void do_send() {
 	message->data = mess_data;
 	message->nickname = owner.nickname;
 	message->tv_id = 0;
-	pthread_create(&watcher, 0, watcher_thread, (void *)message);
+	pthread_create(&watcher, 0, mx_watcher_thread, (void *)message);
 	gtk_entry_set_text(GTK_ENTRY(sendEntry), "");
 	// printf("\n==============%f\n", gtk_adjustment_get_upper(vAdjust));
 	gdk_threads_add_idle((GSourceFunc)mx_autoscroll, NULL);
 
 }
 
-static void zero_string(char *arr) {
+void mx_zero_string(char *arr) {
 	for (int i =0; i < BUF_SIZE; i++)
 		arr[i] = '\0';
 }
@@ -597,32 +597,24 @@ void mx_do_history_request() {
 
 	data = json_object_to_json_string(jobj);
 	tls_write(tls_ctx, data, strlen(data));
-	// mx_strdel((char **)&data);
 }
 
-void message_request_history(void) {
+void mx_message_request_history(void) {
 	char answ[BUF_SIZE];
 	json_object *jobj;
 
-	// printf("*\n");
 	mx_do_history_request();
-	// printf("**\n");
-	zero_string(answ); /////////// не обнулять а через рид
-	// printf("***\n");
+	mx_zero_string(answ); /////////// не обнулять а через рид
 	tls_read(tls_ctx, answ, BUF_SIZE);
 	if (strcmp("no_history", answ) == 0)
 		return;
-	// printf("****\n");
 	jobj = json_tokener_parse(answ);
-	// printf("*****\n");
 	int hst_size = mx_history_size(jobj);
-	// printf("******\n");
 	mx_create_hst_message_list(hst_size);
-	// printf("*******\n");
 	json_object_put(jobj);
 }
 
-void init_chat_window(char *nickname)
+void mx_init_chat_window(char *nickname)
 {
 	GtkBuilder *builder = gtk_builder_new_from_file("client/gld/chat.glade");
 
@@ -635,14 +627,14 @@ void init_chat_window(char *nickname)
 	gtk_window_set_position(GTK_WINDOW(chatWindow), GTK_WIN_POS_CENTER);
 	sendEntry = GTK_WIDGET(gtk_builder_get_object(builder,"SendEntry"));
 	sendButton = GTK_WIDGET(gtk_builder_get_object(builder,"SendButton"));
-	hendler_id_entry = g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(do_send),NULL);
-	hendler_id_button = g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(do_send),NULL);
+	hendler_id_entry = g_signal_connect(G_OBJECT(sendEntry),"activate", G_CALLBACK(mx_do_send),NULL);
+	hendler_id_button = g_signal_connect(G_OBJECT(sendButton),"clicked", G_CALLBACK(mx_do_send),NULL);
 	Viewport = GTK_WIDGET(gtk_builder_get_object(builder,"Viewport"));
 	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"ScrolledWindow"));
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
 	
-	message_request_history();
+	mx_message_request_history();
 	GtkCssProvider *cssStyle;
 	cssStyle = gtk_css_provider_new();
 	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
@@ -654,5 +646,5 @@ void init_chat_window(char *nickname)
 	gtk_widget_set_name(chatWindow, "main_window");
 	gtk_widget_set_name(sendButton, "send_button");
 	gtk_widget_set_name(sendEntry, "send_entry");
-	pthread_create(&server, 0, read_server_thread, NULL);
+	pthread_create(&server, 0, mx_read_server_thread, NULL);
 }

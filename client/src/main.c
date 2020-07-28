@@ -129,7 +129,7 @@ int main(int argc,char *argv[]){
     if (mx_init_connection(sock, start_data) < 0)
         return -1;
     gtk_init(&argc, &argv);
-    init_start_window();
+    mx_init_start_window();
     gtk_widget_show_all(StartWindow);
     gtk_main();
     close(sock);
