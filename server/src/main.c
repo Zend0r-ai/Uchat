@@ -12,14 +12,15 @@ int server = 0;
 int main(int argc, const char **argv) {
     tls_cfg = NULL;
 	tls_ctx = NULL;
-    // int server = 0;
+
     signal(SIGINT, mx_destroyer);
+    signal(SIGKILL, mx_destroyer);
     if (argc != 2) {
         fprintf(stderr, "usage: ./uchat_server port\n");
         return -1;
     }
     memset(connected_users, 0, USERS_LIMIT*sizeof(int));
-    //mx_daemonizer();
+    mx_daemonizer();
     server = init_server_socket(atoi(argv[1]));
     tls_set_config(&tls_cfg, &tls_ctx);
     mx_bind(server);
@@ -93,6 +94,5 @@ static void mx_destroyer() {
     tls_free(tls_ctx);
     tls_config_free(tls_cfg);
     close(server);
-    printf("\nBye!\n");
     exit(0);
 }

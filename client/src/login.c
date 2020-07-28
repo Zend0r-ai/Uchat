@@ -22,8 +22,6 @@ char *mx_message_do_login(t_user_info *log_par) {
 	json_object_object_add(jobj, "login", j_login);
 	json_object_object_add(jobj, "password", j_passwd);
 	data = (char *)json_object_to_json_string(jobj);
-	write(0, data, strlen(data));												/***************/
-	write(0, "\n", strlen("\n"));												/***************/
 	while ((tls_write(tls_ctx, data, strlen(data))) <= 0) {
 		rc = mx_do_reconnection(-1);
         if (rc < 0) {
