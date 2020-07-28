@@ -9,20 +9,11 @@ static void mx_destroyer(int server);
 
 int server = 0;
 
-void sig_end(int a) {
-    a = 0;
-
-    tls_close(tls_ctx);
-    close(server);
-    printf("\nBye!\n");
-    exit(0);
-}
-
 int main(int argc, const char **argv) {
     tls_cfg = NULL;
 	tls_ctx = NULL;
     // int server = 0;
-    signal(SIGINT, sig_end);
+    signal(SIGINT, mx_destroyer);
     if (argc != 2) {
         fprintf(stderr, "usage: ./uchat_server port\n");
         return -1;
@@ -96,10 +87,12 @@ static int init_server_socket(int port) {
     return server;
 }
 
-static void mx_destroyer(int server) {
+static void mx_destroyer() {
     sqlite3_close(db);
     tls_close(tls_ctx);
     tls_free(tls_ctx);
     tls_config_free(tls_cfg);
     close(server);
+    printf("\nBye!\n");
+    exit(0);
 }
