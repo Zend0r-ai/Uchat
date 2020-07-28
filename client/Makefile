@@ -13,12 +13,9 @@ SDIR	=	uchat.dSYM
 INC		=	client.h
 INCS	=	$(addprefix $(INCD)/, $(INC))
 
-SRC		=	start.c\
-			sign_up.c\
-			login.c\
-			chat.c\
-			main.c\
-			mx_report_tls.c
+SRC		=	add_message.c chat.c delete.c edit.c extra.c free.c gtk_extra.c \
+			gtk_history.c history.c login.c main.c mx_report_tls.c history_2.c\
+			reconnecting.c server_handler.c sign_up.c start.c style.c
 
 
 GLD 	= 	start.glade\
@@ -56,11 +53,11 @@ all: install_json install_libmx install clean
 
 install:
 	@cp $(SGLD) ./
-	@clang $(CFLG) $(SRCS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI) $(LIBRESSL_H) $(LIBRESSL_A)
+	@clang $(CFLG) $(SRCS) $(JSONA) $(LIBMXA) `pkg-config --cflags --libs gtk+-3.0` -o $(NAME) -I$(INCS) -I$(INCD) -I$(JSONI) -I$(LIBMXI) $(LIBRESSL_H) $(LIBRESSL_A) -g -fsanitize=address,undefined
 	@printf "\r\33[2K$(NAME) \033[32;1mcreated\033[0m\n"
 
 install_libmx:
-	@make -sC $(LIBMXD)
+	@make -sC $(LIBMXD) debug
 
 install_json:
 	@make -sC $(JSOND)
@@ -73,7 +70,7 @@ clean:
 
 uninstall: clean
 	@make -sC $(JSOND) $@
-	rm -rf $(SDIR)
+	@rm -rf $(SDIR)
 	@rm -rf $(NAME)
 	@printf "$(NAME) \033[31;1muninstalled\033[0m\n"
 

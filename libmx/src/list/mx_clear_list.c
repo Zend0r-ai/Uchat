@@ -8,10 +8,9 @@ void mx_clear_list(t_list *list) {
         while (temp1 && temp2) {
             temp1 = list->head->next;
             temp1 = list->tail->prev;
-            if (list->head != list->tail && list->head)
+            if (list->head != list->tail)
                 free(list->head);
-            if (list->tail)
-                free(list->tail);
+            free(list->tail);
             list->head = temp1;
             list->tail = temp2;
         }

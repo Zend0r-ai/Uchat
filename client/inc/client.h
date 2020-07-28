@@ -28,6 +28,7 @@
 
 
 #define BUF_SIZE 2048
+#define REQUEST_HISTORY 10
 
 /* ======= Sing In defines ======== */
 #define LG_ERROR_DATA "Wrong login or password"
@@ -45,8 +46,20 @@
 #define CNCT_CLDN 5     // COOL DOWN
 
 
+GtkWidget *chatWindow;
+GtkWidget *sendEntry, *sendButton;
+GtkWidget *statusLabel;
+GtkWidget *Viewport;
+GtkAdjustment *vAdjust;
+GtkScrolledWindow *scrolledWindow;
+GtkListBox *messageList;
+pthread_t watcher;
+pthread_t server;
+gulong hendler_id_entry;
+gulong hendler_id_button;
+
 void mx_init_chat_window();
-extern GtkWidget *chatWindow;
+// extern GtkWidget *chatWindow;
 
 void mx_init_login_window();
 extern GtkWidget *loginWindow;
@@ -130,7 +143,7 @@ typedef struct s_edit_data {
     int index;
 } t_edit_data;
 
-t_client_info *get_client_info(void);
+t_client_info *mx_get_client_info(void);
 
 /* ================== SERVER HANDLER ================== */
 
@@ -138,6 +151,7 @@ void *mx_proc_server_back(char *buffer, t_user_info *user);
 t_user_message *mx_proc_message_back(json_object *jobj);
 void mx_do_message_request(t_user_message *message, const char *request);
 void *mx_read_server_thread(void *par);
+void mx_switch_message_back(t_user_info *user, t_user_message *new_message);
 
 /* =================== SIGN UP ====================== */
 
@@ -199,6 +213,7 @@ int mx_get_index_history_message(t_list *list, int owner_id, int message_id, t_u
 
 gboolean mx_add_message_widget(t_user_message *new_message);
 void mx_do_send();
+void *mx_watcher_thread(void *param);
 
 /* ================== DELETE ======================= */
 
@@ -211,7 +226,6 @@ gboolean mx_delete_message(t_user_message *new_message);
 void mx_edit_message_complite(GtkWidget *widget, gpointer data);
 t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
 void mx_edit_mess(GtkWidget *widget, gpointer data);
-t_user_message *mx_create_edit_message(t_user_message *message, char *msg_body);
 gboolean mx_edit_message(t_edit_data *edit);
 
 /* =============== TLS =============== */
@@ -220,5 +234,6 @@ void mx_report_tls(struct tls * tls_ctx, char * host);
 /* =========== RECONNECTION ========== */
 int mx_init_connection(int sock, t_start *start_data);
 int mx_do_reconnection(int rc);
+void print_history();
 
 #endif
