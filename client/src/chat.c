@@ -40,11 +40,11 @@ void mx_init_chat_window(char *nickname)
 	scrolledWindow = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder,"ScrolledWindow"));
 	vAdjust = gtk_scrolled_window_get_vadjustment(scrolledWindow);
 	messageList = GTK_LIST_BOX(gtk_builder_get_object(builder,"MessageListBox"));
-	
+
 	mx_message_request_history();
 	GtkCssProvider *cssStyle;
 	cssStyle = gtk_css_provider_new();
-	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+	gtk_css_provider_load_from_path(cssStyle, provider_css, NULL);
 	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
 			                               GTK_STYLE_PROVIDER(cssStyle),
 			                               GTK_STYLE_PROVIDER_PRIORITY_USER);

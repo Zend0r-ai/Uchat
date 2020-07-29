@@ -129,6 +129,7 @@ struct tls *tls_ctx;
 t_start *start_data;
 bool is_editing;
 volatile bool lock;
+char *provider_css;
 // GtkWidget *widget_list;
 
 

@@ -1,0 +1,169 @@
+#send_button {
+	/*color: rgb(62,254,252);*/
+	color: rgb(252,79,247);
+	/*text-transform: uppercase;*/
+	font-size: 16px;
+	text-shadow: none;
+	background: rgba(113,29,174,0);
+	/*background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(227,227,224,1) 50%, rgba(255,255,255,1) 100%);*/
+	/*padding: 20px;*/
+	border: 3px solid rgb(62,254,252);
+	/*border: 3px solid rgb(252,79,247);*/
+	border-radius: 6px;
+	/*display: inline-block;*/
+	transition: all 0.3s ease 0s;
+	outline: none;
+	box-shadow: none;
+}
+
+#send_button:hover {
+	/*text-transform: uppercase;*/
+	font-size: 16px;
+	border-radius: 50px;
+	border-color: rgb(252,79,247);
+	/*border-color: rgb(62,254,252);*/
+	background: rgba(0,210,249,0);
+	/*background: linear-gradient(0deg, rgba(241,241,241,1) 0%, rgba(255,255,255,1) 50%, rgba(241,241,241,1) 100%);*/
+	/*color: rgb(252,79,247);*/
+	color: rgb(62,254,252);
+	/*display: inline-block;*/
+}
+
+#input_message {
+	font-family: Verdana;
+	text-shadow: none;
+    box-shadow: none;
+    color: rgb(62,254,252);
+	border: 2px solid rgba(171,11,166,1);
+	background: rgba(255,118,251,.6);
+	border-radius: 5px 5px 5px 5px;
+}
+/*
+#input_message:hover {
+	border: 2px solid rgba(164,164,164,1);
+	background: rgba(205,205,205,1);
+}*/
+
+#output_message {
+	font-family: Verdana;
+	outline: none;
+	color: #ff1bf8;
+    /*padding-right: 5px;*/
+	font-size: 13px;
+	font-weight: 500;
+	text-shadow: none;
+    box-shadow: none;
+	border: 2px solid rgb(62,254,252);
+	background: rgba(0,116,139,.6);
+	/*background: rgba(30,119,138,.7);*/
+
+	/*border-radius: 15px 15px 0px 15px;*/
+	border-radius: 5px 5px 5px 5px;
+	/*background: linear-gradient(0deg, rgba(107,231,88,1) 0%, rgba(136,252,118,1) 50%, rgba(107,231,88,1) 100%);*/
+}
+
+#output_message:hover {
+	color: rgb(62,254,252);
+	border: 2px solid rgb(252,79,247);
+	background: #1e778a;
+	/*background: linear-gradient(0deg, rgba(33,91,29,1) 0%, rgba(81,228,92,1) 25%, rgba(88,247,101,1) 50%, rgba(78,219,88,1) 75%, rgba(33,91,29,1) 100%);*/
+}
+
+#popup_menu {
+	border: 2px solid rgb(62,254,252);
+	outline: none;
+	box-shadow: none;
+	color: rgb(252,79,247);
+	background: rgba(54,3,108,.8);
+}
+
+#edit_tool:hover{
+	/*border-radius: 50px;*/
+	color: rgb(62,254,252);
+	/*border-color: #494949;*/
+	/*transition: all 0.3s ease 0s;*/
+	background: rgba(0,0,0,0);
+}
+
+entry {
+	padding: 2px 3px;
+	border: 2px solid;
+	font-size: 13px;
+	border-radius: 6px;
+	color: rgb(252,79,247);
+	background: rgba(0,0,0,.5);
+	/*border-color: rgb(252,79,247);*/
+	border-color: rgb(62,254,252);
+}
+
+#main_window {
+	background: rgb(30,119,138);
+	background: linear-gradient(0deg, rgba(30,119,138,1) 0%, rgba(54,3,108,1) 52%, rgba(193,7,77,1) 52%, rgba(224,15,94,1) 53%, rgba(46,3,92,1) 53%, rgba(43,2,85,1) 54%, rgba(246,51,115,1) 54%, rgba(251,60,116,1) 56%, rgba(38,2,74,1) 56%, rgba(38,2,74,1) 58%, rgba(247,51,108,1) 58%, rgba(237,98,63,1) 62%, rgba(38,2,74,1) 62%, rgba(31,0,61,1) 64%, rgba(248,109,74,1) 64%, rgba(250,161,73,1) 70%, rgba(38,2,74,1) 70%, rgba(27,0,55,1) 74%, rgba(250,164,73,1) 74%, rgba(253,184,71,1) 100%);
+}
+
+#row {
+	padding-right: 20px;
+}
+
+#box {
+	padding: 20px 10px 20px 10px;
+	background-color: rgba(0,0,0,.5);
+	border-radius: 5px;
+}
+
+viewport {
+	border-radius: 3px;
+	background-color: rgba(0,0,0,.5);
+	/*background: rgba(0,0,0,.5);*/
+}
+
+#name_label {
+	font-size: 24px;
+	/*font-family: Geneva, Arial, sans-serif;*/
+	font-weight: 900;
+}
+
+
+#time {
+	color: rgba(62,254,252,.8);
+	margin-bottom: 11px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+#nickname {
+	margin-right: 10px;
+	font-size: 12px;
+	color:rgba(62,254,252,.8);
+	background: rgba(255,255,255,0);
+}
+
+scrolledwindow{
+	border: none;
+	outline: none;
+	box-shadow: none;
+	background-color: rgba(0,0,0,0);
+}
+list {
+	border: none;
+	outline: none;
+	box-shadow: none;
+	background-color: rgba(0,0,0,0);
+}
+
+scrollbar {
+	outline: none;
+	background-color: rgba(0,0,0,.3);
+}
+
+trough {
+	background-color: rgba(0,0,0,0);
+}
+trough:hover {
+	background-color: rgba(0,0,0,0);
+}
+
+slider:hover {
+
+	background-color: rgba(62,254,252,.9);
+}

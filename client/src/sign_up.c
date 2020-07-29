@@ -4,6 +4,7 @@ GtkWidget *loginEntry, *passwordEntry, *passwordConfirm, *nicknameEntry;
 GtkWidget *regButton;
 GtkWidget *signUpWindow;
 GtkWidget *statusLabel;
+GtkWidget *box;
 pthread_t reginer;
 int regged_in;
 
@@ -208,6 +209,7 @@ void mx_init_sign_up_window()
     passwordEntry = GTK_WIDGET(gtk_builder_get_object(builder,"reg_pass_entry"));
     passwordConfirm = GTK_WIDGET(gtk_builder_get_object(builder,"confirm_pass_entry"));
     nicknameEntry = GTK_WIDGET(gtk_builder_get_object(builder,"nickname_entry"));
+    box = GTK_WIDGET(gtk_builder_get_object(builder,"box_id"));
     g_signal_connect(G_OBJECT(loginEntry),"activate", G_CALLBACK(mx_do_reg), NULL);
     g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(mx_do_reg), NULL);
     g_signal_connect(G_OBJECT(passwordConfirm),"activate", G_CALLBACK(mx_do_reg), NULL);
@@ -218,13 +220,14 @@ void mx_init_sign_up_window()
     
     GtkCssProvider *cssStyle;
     cssStyle = gtk_css_provider_new();
-    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+    gtk_css_provider_load_from_path(cssStyle, provider_css, NULL);
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
                                            GTK_STYLE_PROVIDER(cssStyle),
                                            GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     gtk_widget_set_name(signUpWindow, "main_window");
     gtk_widget_set_name(regButton, "send_button");
+    gtk_widget_set_name(box, "box");
     
     regged_in = 0;
     g_timeout_add(50, mx_check_reg, 0);

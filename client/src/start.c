@@ -76,7 +76,7 @@ void mx_init_start_window()
     
     GtkCssProvider *cssStyle;
     cssStyle = gtk_css_provider_new();
-    gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+    gtk_css_provider_load_from_path(cssStyle, provider_css, NULL);
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
                                            GTK_STYLE_PROVIDER(cssStyle),
                                            GTK_STYLE_PROVIDER_PRIORITY_USER);

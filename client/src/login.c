@@ -6,6 +6,7 @@ GtkWidget *loginEntry, *passwordEntry;
 GtkWidget *statusLabel;
 GtkWidget *loginButton;
 GtkWidget *loginWindow;
+GtkWidget *box;
 pthread_t loginner;
 int logged_in;
 
@@ -144,17 +145,19 @@ void mx_init_login_window()
 	g_signal_connect(G_OBJECT(passwordEntry),"activate", G_CALLBACK(mx_do_login),NULL);
 	statusLabel = GTK_WIDGET(gtk_builder_get_object(builder,"StatusLabel"));
 	loginButton = GTK_WIDGET(gtk_builder_get_object(builder,"LoginButton"));
+    box = GTK_WIDGET(gtk_builder_get_object(builder,"box_id"));
 	g_signal_connect(G_OBJECT(loginButton),"clicked", G_CALLBACK(mx_do_login),NULL);
 	
 	GtkCssProvider *cssStyle;
 	cssStyle = gtk_css_provider_new();
-	gtk_css_provider_load_from_path(cssStyle, "./client/src/style.css", NULL);
+	gtk_css_provider_load_from_path(cssStyle, provider_css, NULL);
 	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
 			                               GTK_STYLE_PROVIDER(cssStyle),
 			                               GTK_STYLE_PROVIDER_PRIORITY_USER);
 
 	gtk_widget_set_name(loginWindow, "main_window");
 	gtk_widget_set_name(loginButton, "send_button");
+    gtk_widget_set_name(box, "box");
 
 	logged_in = 0;
 	g_timeout_add(50, mx_check_login, 0);
