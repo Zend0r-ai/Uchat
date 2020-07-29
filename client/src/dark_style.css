@@ -86,7 +86,7 @@
 }
 
 entry {
-	padding: 2px 3px;
+	padding: 2px 10px;
 	border: 2px solid;
 	font-size: 13px;
 	border-radius: 6px;
@@ -103,6 +103,7 @@ entry {
 
 #row {
 	padding-right: 20px;
+	outline: none;
 }
 
 #box {
@@ -112,6 +113,7 @@ entry {
 }
 
 viewport {
+	padding: 0 2px 0 5px;
 	border-radius: 3px;
 	background-color: rgba(0,0,0,.5);
 	/*background: rgba(0,0,0,.5);*/
