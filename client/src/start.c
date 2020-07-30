@@ -72,7 +72,7 @@ void mx_init_start_window()
     Logo = GTK_WIDGET(gtk_builder_get_object(builder,"logo"));
     g_signal_connect(G_OBJECT(SignInButton),"clicked", G_CALLBACK(open_login_win),NULL);
 
-    gtk_image_set_from_file(GTK_IMAGE(Logo), "./210210.png");
+    gtk_image_set_from_file(GTK_IMAGE(Logo), image);
     
     GtkCssProvider *cssStyle;
     cssStyle = gtk_css_provider_new();

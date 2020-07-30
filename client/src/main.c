@@ -59,9 +59,12 @@ t_start *mx_check_input(int argc, char *argv[]){
     }
     else if(argc >= 4 && strcmp("-d", argv[3]) == 0) {
         provider_css = "./client/src/dark_style.css";
+        image = "./dark.png";
+
     }
     else {
         provider_css = "./client/src/style.css";
+        image = "./210210.png";
     }
     if (!mx_check_ip(argv, &ip)) {
     	mx_print_usage(1);

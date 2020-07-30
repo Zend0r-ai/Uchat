@@ -130,6 +130,7 @@ t_start *start_data;
 bool is_editing;
 volatile bool lock;
 char *provider_css;
+char *image;
 bool connecting;
 // GtkWidget *widget_list;
 
