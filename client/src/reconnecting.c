@@ -53,6 +53,7 @@ int mx_do_reconnection(int rc) {
 	t_client_info *info = mx_get_client_info();
 	int counter = 0;
 
+    connecting = true;
 	while(rc <= 0) {
 		sleep(CNCT_CLDN);
 		printf("TRY CONNECTING\n"); // выод на панели
@@ -63,10 +64,13 @@ int mx_do_reconnection(int rc) {
 			tls_ctx = NULL;
 		}
 		info->socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (mx_init_connection(info->socket, start_data) == 0)
+		if (mx_init_connection(info->socket, start_data) == 0) {
+            connecting = false;
 			return 0;
+        }
 		if (counter++ == CNCT_AM)
 			return -1;
 	}
+    connecting = false;
 	return 0;
 }

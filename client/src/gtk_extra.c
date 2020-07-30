@@ -2,12 +2,14 @@
 
 gboolean mx_autoscroll(){
     gtk_adjustment_set_value(vAdjust, gtk_adjustment_get_upper(vAdjust));
-    return TRUE;
+    // return TRUE;
+    return FALSE;
 }
 
 void mx_change_title(char *name) {
 	if(name == NULL){
 		gtk_window_set_title(GTK_WINDOW(chatWindow), "Connection...");
+		// gdk_threads_add_idle((GSourceFunc)mx_grab_focus, passwordEntry);
 	}
 	else {
 		gtk_window_set_title(GTK_WINDOW(chatWindow), name);

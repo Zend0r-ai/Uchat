@@ -20,6 +20,8 @@ gboolean mx_add_message_widget(t_user_message *new_message) {
 void mx_do_send() {
 	char *mess_data;
 
+	if (connecting)
+		return;
 	mess_data = strdup(gtk_entry_get_text(GTK_ENTRY(sendEntry)));
 	if(!mess_data || !*mess_data)
 	{
